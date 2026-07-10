@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CRM — Legio Inmobiliaria (Interno)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="interno.css" />
+</head>
+<body class="int">
+
+  <!-- Barra superior (solo con sesión) -->
+  <header class="int-top" id="topBar" style="display:none;">
+    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
+      <div class="int-top__brand">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag">CRM</span>
+      </div>
+      <div class="int-top__actions">
+        <span class="int-top__user" id="userLabel"></span>
+        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOGIN -->
+  <section class="int-login int-card" id="loginCard">
+    <div class="int-login__logo">
+      <span class="logo-legio">LEGIO</span>
+      <div class="int-top__tag" style="color:var(--gold);">CRM · acceso de asesores</div>
+    </div>
+    <div class="crm-config-warn" id="configWarn" style="display:none;">
+      Falta configurar la conexión con Supabase. Pega tu <code>URL</code> y <code>anon key</code>
+      en <code>interno/js/supabase-config.js</code>.
+    </div>
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="email">Correo</label>
+        <input type="email" id="email" placeholder="tu@correo.com" autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="pwd">Contraseña</label>
+        <input type="password" id="pwd" placeholder="Tu contraseña" autocomplete="current-password" />
+      </div>
+      <div class="int-login__error" id="loginError"></div>
+      <button type="submit" class="btn btn--gold btn--full">Entrar</button>
+    </form>
+  </section>
+
+  <!-- HOME DEL CRM -->
+  <main class="int-wrap" id="home" style="display:none;">
+    <div class="int-head">
+      <h1>Panel de Legio</h1>
+      <div class="buscador">
+        <input type="search" id="buscarGlobal" placeholder="Buscar prospecto o propiedad…" autocomplete="off" />
+        <div class="buscador__res" id="buscarRes" hidden></div>
+      </div>
+    </div>
+    <p class="crm-count" id="welcome"></p>
+
+    <!-- Pendientes del día -->
+    <section id="pendientes" class="pend" style="display:none;">
+      <h2 class="pend__titulo">Tus pendientes de hoy</h2>
+      <div class="pend__tiles" id="pendTiles"></div>
+      <div id="pendLista"></div>
+    </section>
+
+    <div class="crm-nav">
+      <a class="crm-nav__card" href="crm.html">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20L24 6L42 20V42H30V30H18V42H6V20Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        <h3>Propiedades</h3>
+        <p>Alta, edición y cambio de estatus (disponible, apartada, vendida).</p>
+      </a>
+      <a class="crm-nav__card" href="leads.html">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="16" r="8" stroke="currentColor" stroke-width="2.5"/><path d="M8 40c0-8 7-13 16-13s16 5 16 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h3>Prospectos</h3>
+        <p>Leads del sitio y manuales. Asigna asesor y da seguimiento.</p>
+      </a>
+      <a class="crm-nav__card" href="avaluos.html">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 6h20l8 8v28H10V6z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M17 24h14M17 32h14M17 16h6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h3>Avalúos</h3>
+        <p>Valuaciones profesionales del equipo, con informe para el cliente.</p>
+      </a>
+      <a class="crm-nav__card crm-nav__card--admin" id="cardMetricas" href="metricas.html" style="display:none;">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 42h36M12 34V20M22 34V10M32 34V26M42 34V16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h3>Métricas <span class="badge-origen">Admin</span></h3>
+        <p>Embudo, origen de leads, desempeño por asesor y días en mercado.</p>
+      </a>
+      <a class="crm-nav__card crm-nav__card--admin" id="cardComisiones" href="comisiones.html" style="display:none;">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 4v40M14 12h16a6 6 0 0 1 0 12H18a6 6 0 0 0 0 12h16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <h3>Comisiones <span class="badge-origen">Admin</span></h3>
+        <p>Reporte de comisiones por asesor y periodo (captador y vendedor).</p>
+      </a>
+      <a class="crm-nav__card crm-nav__card--admin" id="cardAsesores" href="asesores.html" style="display:none;">
+        <svg class="crm-nav__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="16" r="7" stroke="currentColor" stroke-width="2.5"/><path d="M4 40c0-7 6-11 14-11M30 22l4 4 8-8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Asesores <span class="badge-origen">Admin</span></h3>
+        <p>Gestiona perfiles, roles, accesos y reparto de leads.</p>
+      </a>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/crm-util.js"></script>
+  <script src="js/crm-auth.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="js/crm-home-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Propiedades en venta y renta en el Bajío — Legio Inmobiliaria</title>
+  <meta name="description" content="Explora casas, departamentos, locales y terrenos en venta y renta en León, Guanajuato y el Bajío con Legio Inmobiliaria." />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Legio Inmobiliaria" />
+  <meta property="og:title" content="Propiedades en venta y renta en el Bajío — Legio Inmobiliaria" />
+  <meta property="og:description" content="Casas, departamentos, locales y terrenos en León, Guanajuato y el Bajío." />
+  <!-- TODO: reemplaza con la URL real del sitio y una imagen 1200x630 -->
+  <meta property="og:url" content="https://legioinmobiliaria.mx/propiedades.html" />
+  <meta property="og:image" content="https://legioinmobiliaria.mx/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Datos estructurados. TODO: agregar ItemList con las propiedades cuando sean reales. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Legio Inmobiliaria",
+    "url": "https://legioinmobiliaria.mx/propiedades.html",
+    "areaServed": ["León", "Guanajuato", "Silao", "San Francisco del Rincón", "Irapuato", "Salamanca", "Celaya"]
+  }
+  </script>
+
+  <script>
+    window.GA_ID = '';    // TODO: Google Analytics 4
+    window.PIXEL_ID = ''; // TODO: Meta Pixel
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="index.html" class="nav__logo">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+      </a>
+      <nav class="nav__links">
+        <a href="propiedades.html">Propiedades</a>
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#como-trabajamos">Cómo trabajamos</a>
+        <a href="index.html#guias">Guías</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+      <a href="estimador.html" class="btn btn--gold nav__cta">Valúa tu Propiedad</a>
+      <button class="nav__burger" id="burger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobileMenu">
+      <a href="propiedades.html" class="nav__mobile-link">Propiedades</a>
+      <a href="index.html#servicios" class="nav__mobile-link">Servicios</a>
+      <a href="index.html#como-trabajamos" class="nav__mobile-link">Cómo trabajamos</a>
+      <a href="index.html#guias" class="nav__mobile-link">Guías</a>
+      <a href="index.html#contacto" class="nav__mobile-link">Contacto</a>
+      <a href="estimador.html" class="btn btn--gold nav__mobile-cta">Valúa tu Propiedad</a>
+    </div>
+  </header>
+
+  <!-- ===== HERO PEQUEÑO ===== -->
+  <section class="est-hero">
+    <div class="est-hero__overlay"></div>
+    <div class="est-hero__content container">
+      <p class="hero__eyebrow">Portafolio actual</p>
+      <h1 class="est-hero__title">Propiedades en venta<br>y renta en el Bajío</h1>
+      <p class="est-hero__sub">Casas, departamentos, locales y terrenos en las 7 ciudades donde operamos. Filtra y encuentra la tuya.</p>
+    </div>
+  </section>
+
+  <!-- ===== CATÁLOGO ===== -->
+  <section class="section section--light">
+    <div class="container">
+
+      <!-- Barra de filtros -->
+      <div class="filters-bar">
+        <div class="form-group">
+          <label for="f-ciudad">Ciudad</label>
+          <select id="f-ciudad">
+            <option value="">Todas las ciudades</option>
+            <option>León</option>
+            <option>Guanajuato</option>
+            <option>Silao</option>
+            <option>San Francisco del Rincón</option>
+            <option>Irapuato</option>
+            <option>Salamanca</option>
+            <option>Celaya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-tipo">Tipo</label>
+          <select id="f-tipo">
+            <option value="">Todos los tipos</option>
+            <option value="casa">Casa</option>
+            <option value="departamento">Departamento</option>
+            <option value="local">Local comercial</option>
+            <option value="terreno">Terreno</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-operacion">Operación</label>
+          <select id="f-operacion">
+            <option value="">Venta y renta</option>
+            <option value="venta">Venta</option>
+            <option value="renta">Renta</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="f-orden">Ordenar por</label>
+          <select id="f-orden">
+            <option value="">Relevancia</option>
+            <option value="precio-asc">Precio: menor a mayor</option>
+            <option value="precio-desc">Precio: mayor a menor</option>
+          </select>
+        </div>
+        <span class="filters-bar__count" id="f-count"></span>
+      </div>
+
+      <!-- Tarjetas generadas desde propiedades.js -->
+      <div class="properties__grid" id="gridCatalogo"></div>
+
+    </div>
+  </section>
+
+  <!-- ===== BANDA DOBLE CTA ===== -->
+  <section class="section section--white">
+    <div class="container">
+      <div class="cta-band">
+        <p class="cta-band__eyebrow">¿No encuentras lo que buscas?</p>
+        <h2 class="cta-band__title">Te ayudamos a encontrarla</h2>
+        <p class="cta-band__text">Cuéntanos qué tipo de propiedad buscas y en qué zona. Te avisamos en cuanto tengamos algo que encaje. Y si tienes una propiedad como estas, descubre cuánto vale.</p>
+        <div class="cta-band__actions">
+          <a href="index.html#contacto" class="btn btn--gold btn--lg">Dinos qué buscas</a>
+          <a href="estimador.html" class="btn btn--outline btn--lg">Valúa tu propiedad</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <span class="footer__logo"><span class="logo-legio">LEGIO</span> Inmobiliaria</span>
+          <p>Venta, renta y asesoría inmobiliaria en León, Guanajuato y todo el Bajío. Te acompañamos de principio a fin.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Sitio</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="propiedades.html">Propiedades</a></li>
+            <li><a class="footer__link" href="estimador.html">Valúa tu propiedad</a></li>
+            <li><a class="footer__link" href="guia-documentos-venta.html">Documentos para vender</a></li>
+            <li><a class="footer__link" href="guia-tiempo-venta-leon.html">¿Cuánto tarda venderse?</a></li>
+            <li><a class="footer__link" href="guia-errores-precio.html">Errores de precio</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal y contacto</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="aviso-privacidad.html">Aviso de privacidad</a></li>
+            <li><a class="footer__link" href="index.html#contacto">Contacto</a></li>
+            <li><a class="footer__link" href="https://wa.me/524770000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__bottom">© <span id="footerYear">2024</span> Legio Inmobiliaria. Todos los derechos reservados. León, Guanajuato, México.</p>
+    </div>
+  </footer>
+
+  <!-- Supabase (catálogo en vivo desde el CRM) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="interno/js/supabase-config.js"></script>
+  <script src="interno/js/crm-data.js"></script>
+  <script src="script.js"></script>
+  <script src="propiedades.js"></script>
+</body>
+</html>

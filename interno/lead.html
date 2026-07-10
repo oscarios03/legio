@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Prospecto — CRM Legio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="interno.css" />
+</head>
+<body class="int">
+
+  <header class="int-top">
+    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
+      <div class="int-top__brand">
+        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag">Prospecto</span>
+      </div>
+      <div class="int-top__actions">
+        <a class="btn btn--ghost btn--sm" href="leads.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Prospectos</a>
+        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="int-wrap">
+    <div id="msg"></div>
+    <div id="cargando" class="int-card int-empty">Cargando…</div>
+
+    <div id="ficha" style="display:none;">
+
+      <!-- Encabezado con acciones rápidas -->
+      <div class="lead-hero int-card">
+        <div class="lead-hero__main">
+          <span class="badge-origen" id="l-origen">—</span>
+          <h1 id="l-nombre">—</h1>
+          <p class="lead-hero__meta" id="l-meta"></p>
+        </div>
+        <div class="lead-hero__acciones">
+          <a class="btn btn--gold btn--sm" id="btnWA" target="_blank" rel="noopener">💬 WhatsApp</a>
+          <a class="btn btn--ghost btn--sm" id="btnTel">📞 Llamar</a>
+          <button class="btn btn--ghost btn--sm" id="btnCopiar">Copiar teléfono</button>
+        </div>
+      </div>
+
+      <!-- Aviso de posible duplicado -->
+      <div id="dupWrap"></div>
+
+      <div class="lead-cols">
+
+        <!-- Columna izquierda: seguimiento -->
+        <div>
+          <div class="int-card">
+            <h3 class="int-card__title">Seguimiento</h3>
+            <div class="int-grid-2">
+              <div class="form-group">
+                <label for="l-estatus">Estatus</label>
+                <select id="l-estatus">
+                  <option value="nuevo">Nuevo</option>
+                  <option value="contactado">Contactado</option>
+                  <option value="cita">Cita</option>
+                  <option value="cerrado">Cerrado</option>
+                  <option value="perdido">Perdido</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="l-asesor">Asesor asignado</label>
+                <select id="l-asesor"><option value="">Sin asignar</option></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="l-seguimiento">Próximo seguimiento</label>
+              <input type="date" id="l-seguimiento" />
+              <div class="lead-chips">
+                <button type="button" class="lead-chip" data-dias="0">Hoy</button>
+                <button type="button" class="lead-chip" data-dias="1">Mañana</button>
+                <button type="button" class="lead-chip" data-dias="3">En 3 días</button>
+                <button type="button" class="lead-chip" data-dias="7">En 1 semana</button>
+                <button type="button" class="lead-chip" data-dias="">Quitar</button>
+              </div>
+            </div>
+
+            <div class="form-group" id="motivoBox" style="display:none;">
+              <label for="l-motivo">Motivo de pérdida</label>
+              <select id="l-motivo"></select>
+            </div>
+          </div>
+
+          <!-- Registrar actividad -->
+          <div class="int-card">
+            <h3 class="int-card__title">Registrar contacto</h3>
+            <p class="int-card__desc">Queda en la bitácora con tu nombre y la fecha.</p>
+            <div class="lead-tipos" id="actTipos">
+              <button type="button" class="lead-tipo is-active" data-tipo="llamada">📞 Llamada</button>
+              <button type="button" class="lead-tipo" data-tipo="whatsapp">💬 WhatsApp</button>
+              <button type="button" class="lead-tipo" data-tipo="email">✉️ Correo</button>
+              <button type="button" class="lead-tipo" data-tipo="cita">📅 Cita</button>
+              <button type="button" class="lead-tipo" data-tipo="visita">🏠 Visita</button>
+              <button type="button" class="lead-tipo" data-tipo="nota">📝 Nota</button>
+            </div>
+            <div class="form-group">
+              <label for="act-comentario">¿Qué pasó?</label>
+              <textarea id="act-comentario" rows="2" placeholder="Ej: No contestó, le mandé mensaje. Vuelvo a marcar el viernes."></textarea>
+            </div>
+            <button class="btn btn--gold btn--sm" id="btnActividad">Guardar en la bitácora</button>
+          </div>
+
+          <!-- Bitácora -->
+          <div class="int-card">
+            <h3 class="int-card__title">Bitácora</h3>
+            <div id="timeline"><p class="int-empty" style="padding:24px 0;">Sin actividad registrada.</p></div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: datos y match -->
+        <aside>
+          <div class="int-card">
+            <h3 class="int-card__title">Datos del prospecto</h3>
+            <div class="form-group"><label for="l-nombre-in">Nombre</label><input type="text" id="l-nombre-in" /></div>
+            <div class="form-group"><label for="l-tel">Teléfono</label><input type="tel" id="l-tel" /></div>
+            <div class="form-group"><label for="l-email">Correo</label><input type="email" id="l-email" /></div>
+            <div class="int-grid-2">
+              <div class="form-group"><label for="l-ciudad">Ciudad</label><input type="text" id="l-ciudad" /></div>
+              <div class="form-group">
+                <label for="l-tipo">Le interesa</label>
+                <select id="l-tipo">
+                  <option value="">—</option>
+                  <option value="casa">Casa</option>
+                  <option value="departamento">Departamento</option>
+                  <option value="local">Local comercial</option>
+                  <option value="terreno">Terreno</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label for="l-presupuesto">Presupuesto (MXN)</label><input type="number" id="l-presupuesto" min="0" /></div>
+            <div class="form-group">
+              <label for="l-propiedad">Propiedad de interés</label>
+              <select id="l-propiedad"><option value="">—</option></select>
+            </div>
+            <div class="form-group"><label for="l-mensaje">Mensaje original</label><textarea id="l-mensaje" rows="3" readonly></textarea></div>
+            <div class="form-group"><label for="l-notas">Notas internas</label><textarea id="l-notas" rows="3" placeholder="Lo que conviene recordar de este cliente."></textarea></div>
+            <button class="btn btn--gold btn--sm btn--full" id="btnGuardar">Guardar datos</button>
+          </div>
+
+          <div class="int-card" id="matchCard" style="display:none;">
+            <h3 class="int-card__title">Propiedades que podrían interesarle</h3>
+            <p class="int-card__desc">Según ciudad, tipo y presupuesto.</p>
+            <div id="matchWrap"></div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/crm-util.js"></script>
+  <script src="js/crm-auth.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="js/lead-ui.js"></script>
+</body>
+</html>

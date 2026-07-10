@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Nuevo avalúo — Legio (Interno)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="interno.css" />
+</head>
+<body class="int">
+
+  <header class="int-top">
+    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
+      <div class="int-top__brand">
+        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag">Nuevo avalúo</span>
+      </div>
+      <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Volver al panel</a>
+    </div>
+  </header>
+
+  <main class="int-wrap int-wrap--narrow">
+
+    <div class="int-steps" id="steps">
+      <div class="int-step active" data-step="1">1 · Cliente</div>
+      <div class="int-step" data-step="2">2 · Propiedad</div>
+      <div class="int-step" data-step="3">3 · Atributos</div>
+      <div class="int-step" data-step="4">4 · Comparables</div>
+      <div class="int-step" data-step="5">5 · Fotos</div>
+      <div class="int-step" data-step="6">6 · Conclusión</div>
+    </div>
+
+    <!-- PASO 1: Cliente -->
+    <section class="int-card" data-panel="1">
+      <h2 class="int-card__title">Datos del cliente y del asesor</h2>
+      <p class="int-card__desc">El folio y la fecha se generan automáticamente al guardar.</p>
+      <div class="int-grid-2">
+        <div class="form-group"><label for="c-nombre">Cliente *</label><input type="text" id="c-nombre" placeholder="Nombre del cliente" /></div>
+        <div class="form-group"><label for="c-asesor">Asesor responsable *</label><input type="text" id="c-asesor" placeholder="Tu nombre" /></div>
+        <div class="form-group"><label for="c-tel">Teléfono</label><input type="tel" id="c-tel" placeholder="477 000 0000" /></div>
+        <div class="form-group"><label for="c-email">Correo</label><input type="email" id="c-email" placeholder="cliente@correo.com" /></div>
+      </div>
+      <div class="int-actions"><span></span><button class="btn btn--gold" data-next>Continuar →</button></div>
+    </section>
+
+    <!-- PASO 2: Propiedad -->
+    <section class="int-card" data-panel="2" hidden>
+      <h2 class="int-card__title">Datos de la propiedad</h2>
+      <div class="int-grid-2">
+        <div class="form-group">
+          <label for="p-tipo">Tipo *</label>
+          <select id="p-tipo"><option value="">Selecciona</option><option value="casa">Casa</option><option value="departamento">Departamento</option><option value="local">Local comercial</option><option value="terreno">Terreno</option></select>
+        </div>
+        <div class="form-group">
+          <label for="p-cp">Código postal *</label>
+          <input type="text" id="p-cp" maxlength="5" inputmode="numeric" placeholder="Ej: 37150" />
+          <span class="est-cp-ciudad" id="p-cp-ciudad"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="p-colonia">Colonia *</label>
+        <select id="p-colonia" disabled><option value="">Ingresa el código postal primero</option></select>
+      </div>
+      <div class="int-grid-2">
+        <div class="form-group"><label for="p-m2c">M² construidos *</label><input type="number" id="p-m2c" min="10" max="5000" placeholder="120" /></div>
+        <div class="form-group" id="g-m2t"><label for="p-m2t">M² de terreno</label><input type="number" id="p-m2t" min="0" max="20000" placeholder="200" /></div>
+      </div>
+      <div class="int-grid-3" id="row-rec">
+        <div class="form-group"><label for="p-rec">Recámaras</label><select id="p-rec"><option value="0">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option value="5">5+</option></select></div>
+        <div class="form-group"><label for="p-ban">Baños</label><select id="p-ban"><option value="0">—</option><option>1</option><option>2</option><option>3</option><option value="4">4+</option></select></div>
+        <div class="form-group"><label for="p-caj">Estacionamiento</label><select id="p-caj"><option value="0">Sin cajón</option><option value="1">1</option><option value="2">2</option><option value="3">3+</option></select></div>
+      </div>
+      <div class="int-grid-2">
+        <div class="form-group" id="g-nivel"><label for="p-nivel">Nivel (depto)</label><select id="p-nivel"><option value="medio">Piso medio (1–6)</option><option value="alto">Piso alto (7+)</option><option value="bajo">Planta baja sin vista</option></select></div>
+        <div class="form-group"><label for="p-antig">Antigüedad *</label><select id="p-antig"><option value="">Selecciona</option><option value="nueva">Menos de 5 años</option><option value="reciente">5 a 15 años</option><option value="media">15 a 30 años</option><option value="antigua">Más de 30 años</option></select></div>
+      </div>
+      <div class="form-group">
+        <label for="p-conserv">Estado de conservación *</label>
+        <select id="p-conserv"><option value="">Selecciona</option><option value="excelente">Excelente — como nuevo</option><option value="buena">Buena</option><option value="regular">Regular</option><option value="reparaciones">Necesita reparaciones</option></select>
+      </div>
+      <div class="form-group">
+        <label>Extras</label>
+        <div class="est-checks">
+          <label class="est-check"><input type="checkbox" class="p-extra" value="alberca" /> Alberca</label>
+          <label class="est-check"><input type="checkbox" class="p-extra" value="jardin" /> Jardín</label>
+          <label class="est-check"><input type="checkbox" class="p-extra" value="vigilancia" /> Vigilancia</label>
+        </div>
+      </div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+    </section>
+
+    <!-- PASO 3: Atributos avanzados -->
+    <section class="int-card" data-panel="3" hidden>
+      <h2 class="int-card__title">Atributos avanzados</h2>
+      <p class="int-card__desc">Afinan el estimado automático según calidad y ubicación.</p>
+      <div class="int-grid-2">
+        <div class="form-group"><label for="a-calidad">Calidad de acabados</label><select id="a-calidad"><option value="media">Media</option><option value="lujo">Lujo</option><option value="alta">Alta</option><option value="economica">Económica</option></select></div>
+        <div class="form-group"><label for="a-ubic">Ubicación en la colonia</label><select id="a-ubic"><option value="interior">Interior</option><option value="privada">Privada / cerrada</option><option value="avenida">Sobre avenida</option><option value="esquina">Esquina</option><option value="ruidosa">Zona ruidosa</option></select></div>
+      </div>
+      <div class="form-group">
+        <label>Servicios / amenidades</label>
+        <div class="est-checks">
+          <label class="est-check"><input type="checkbox" class="a-serv" value="areas_verdes" /> Áreas verdes</label>
+          <label class="est-check"><input type="checkbox" class="a-serv" value="gimnasio" /> Gimnasio</label>
+          <label class="est-check"><input type="checkbox" class="a-serv" value="alberca_comun" /> Alberca común</label>
+          <label class="est-check"><input type="checkbox" class="a-serv" value="seguridad" /> Seguridad 24/7</label>
+          <label class="est-check"><input type="checkbox" class="a-serv" value="casa_club" /> Casa club</label>
+          <label class="est-check"><input type="checkbox" class="a-serv" value="roof_garden" /> Roof garden</label>
+        </div>
+      </div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+    </section>
+
+    <!-- PASO 4: Comparables -->
+    <section class="int-card" data-panel="4" hidden>
+      <h2 class="int-card__title">Comparativa de mercado</h2>
+      <p class="int-card__desc">Captura propiedades similares en venta o vendidas. El sistema ajusta cada una respecto a tu inmueble y concilia un valor por m².</p>
+      <div class="cmp-list" id="cmpList"></div>
+      <button class="btn btn--ghost btn--sm" id="btnAddCmp" style="margin-top:14px;">+ Agregar comparable</button>
+      <div class="cmp-concl" id="cmpConcl">Agrega comparables para ver la conciliación.</div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+    </section>
+
+    <!-- PASO 5: Fotos -->
+    <section class="int-card" data-panel="5" hidden>
+      <h2 class="int-card__title">Fotos de la propiedad</h2>
+      <p class="int-card__desc">Hasta 6 fotos. Se comprimen automáticamente para el informe.</p>
+      <input type="file" id="fotoInput" accept="image/*" multiple />
+      <div class="fotos-grid" id="fotosGrid"></div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+    </section>
+
+    <!-- PASO 6: Conclusión -->
+    <section class="int-card" data-panel="6" hidden>
+      <h2 class="int-card__title">Conclusión de valor</h2>
+      <div class="concl-box">
+        <div class="concl-tile"><span>Estimado automático (valor central)</span><strong id="res-auto">—</strong></div>
+        <div class="concl-tile"><span>Valor por comparables</span><strong id="res-cmp">—</strong></div>
+      </div>
+
+      <div class="switch-row">
+        <input type="checkbox" id="ovr-activo" />
+        <label for="ovr-activo" style="margin:0;">Ajuste manual del asesor (override)</label>
+      </div>
+      <div id="ovr-fields" hidden>
+        <div class="int-grid-2">
+          <div class="form-group"><label for="ovr-valor">Valor final propuesto (MXN)</label><input type="number" id="ovr-valor" min="0" placeholder="0" /></div>
+        </div>
+        <div class="form-group"><label for="ovr-justif">Justificación del ajuste *</label><textarea id="ovr-justif" rows="3" placeholder="Motivo del ajuste respecto al cálculo automático..."></textarea></div>
+      </div>
+
+      <div class="concl-final">
+        <span>Valor concluido</span>
+        <strong id="res-final">—</strong>
+        <span id="res-rango"></span>
+      </div>
+
+      <div class="int-actions">
+        <button class="btn btn--ghost" data-prev>← Regresar</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn--ghost" id="btnGuardar">Guardar</button>
+          <button class="btn btn--gold" id="btnGuardarInforme">Guardar y ver informe</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="../colonias.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/valuacion-core.js"></script>
+  <script src="js/avaluo-ui.js"></script>
+</body>
+</html>

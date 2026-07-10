@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Propiedad — CRM Legio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="interno.css" />
+</head>
+<body class="int">
+
+  <header class="int-top" id="topBar">
+    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
+      <div class="int-top__brand">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag" id="modoTag">Nueva propiedad</span>
+      </div>
+      <div class="int-top__actions">
+        <a class="btn btn--ghost btn--sm" href="crm.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Propiedades</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="int-wrap int-wrap--narrow">
+    <div class="int-head"><h1 id="titulo">Nueva propiedad</h1></div>
+
+    <div id="msg"></div>
+
+    <form id="propForm" class="int-card" novalidate>
+
+      <div class="form-section-title">Datos generales</div>
+      <div class="form-group">
+        <label for="p-titulo">Título *</label>
+        <input type="text" id="p-titulo" placeholder="Ej: Casa en Gran Jardín" />
+      </div>
+      <div class="int-grid-3">
+        <div class="form-group">
+          <label for="p-tipo">Tipo *</label>
+          <select id="p-tipo">
+            <option value="casa">Casa</option>
+            <option value="departamento">Departamento</option>
+            <option value="local">Local comercial</option>
+            <option value="terreno">Terreno</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="p-operacion">Operación *</label>
+          <select id="p-operacion">
+            <option value="venta">Venta</option>
+            <option value="renta">Renta</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="p-estatus">Estatus *</label>
+          <select id="p-estatus">
+            <option value="borrador">Borrador</option>
+            <option value="disponible">Disponible</option>
+            <option value="apartada">Apartada</option>
+            <option value="vendida">Vendida</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Ubicación</div>
+      <div class="int-grid-3">
+        <div class="form-group">
+          <label for="p-cp">Código postal</label>
+          <input type="text" id="p-cp" placeholder="Ej: 37150" maxlength="5" inputmode="numeric" />
+          <span class="form-hint" id="cp-info"></span>
+        </div>
+        <div class="form-group">
+          <label for="p-ciudad">Ciudad</label>
+          <input type="text" id="p-ciudad" placeholder="Ciudad" />
+        </div>
+        <div class="form-group">
+          <label for="p-colonia">Colonia</label>
+          <select id="p-colonia"><option value="">—</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="p-direccion">Dirección / referencia (interno)</label>
+        <input type="text" id="p-direccion" placeholder="Calle y número (no se publica)" />
+      </div>
+
+      <div class="form-section-title">Características</div>
+      <div class="int-grid-3">
+        <div class="form-group">
+          <label for="p-precio">Precio (MXN) *</label>
+          <input type="number" id="p-precio" placeholder="Ej: 2500000" min="0" />
+          <button type="button" class="btn btn--ghost btn--sm" id="btnSugerir" style="margin-top:6px;">Sugerir precio</button>
+        </div>
+        <div class="form-group">
+          <label for="p-m2">M² construidos</label>
+          <input type="number" id="p-m2" placeholder="Ej: 120" min="0" />
+        </div>
+        <div class="form-group">
+          <label for="p-m2t">M² terreno</label>
+          <input type="number" id="p-m2t" placeholder="Ej: 200" min="0" />
+        </div>
+      </div>
+      <div class="int-grid-3" id="row-hab">
+        <div class="form-group">
+          <label for="p-rec">Recámaras</label>
+          <input type="number" id="p-rec" placeholder="0" min="0" />
+        </div>
+        <div class="form-group">
+          <label for="p-ban">Baños</label>
+          <input type="number" id="p-ban" placeholder="0" min="0" />
+        </div>
+        <div class="form-group">
+          <label for="p-caj">Cajones</label>
+          <input type="number" id="p-caj" placeholder="0" min="0" />
+        </div>
+      </div>
+      <div class="int-grid-2">
+        <div class="form-group">
+          <label for="p-antig">Antigüedad</label>
+          <select id="p-antig">
+            <option value="">—</option>
+            <option value="nueva">Menos de 5 años</option>
+            <option value="reciente">5 a 15 años</option>
+            <option value="media">15 a 30 años</option>
+            <option value="antigua">Más de 30 años</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="p-conserv">Conservación</label>
+          <select id="p-conserv">
+            <option value="">—</option>
+            <option value="excelente">Excelente</option>
+            <option value="buena">Buena</option>
+            <option value="regular">Regular</option>
+            <option value="reparaciones">Necesita reparaciones</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="p-desc">Descripción (se publica en el sitio)</label>
+        <textarea id="p-desc" rows="3" placeholder="Descripción atractiva de la propiedad..."></textarea>
+      </div>
+
+      <div class="form-section-title">Fotos</div>
+      <p class="form-hint">Se comprimen automáticamente. La primera que marques como principal es la que se ve en el sitio.</p>
+      <input type="file" id="fotoInput" accept="image/*" multiple />
+      <div class="fotos-grid" id="fotosGrid"></div>
+
+      <div class="form-section-title">Asignación y publicación</div>
+      <div class="int-grid-2">
+        <div class="form-group">
+          <label for="p-captador">Asesor captador</label>
+          <select id="p-captador"><option value="">—</option></select>
+        </div>
+        <div class="form-group">
+          <label for="p-vendedor">Asesor vendedor</label>
+          <select id="p-vendedor"><option value="">—</option></select>
+        </div>
+      </div>
+      <div class="switch-row"><input type="checkbox" id="p-publica" /> <label for="p-publica">Mostrar en el sitio público</label></div>
+      <div class="switch-row"><input type="checkbox" id="p-destacada" /> <label for="p-destacada">Destacada (aparece en la portada)</label></div>
+
+      <!-- Solo admin -->
+      <div id="ventaBox">
+        <div class="form-section-title">Venta y comisiones <span class="badge-origen">Admin</span></div>
+        <div class="int-grid-2">
+          <div class="form-group">
+            <label for="p-precio-final">Precio de venta final (MXN)</label>
+            <input type="number" id="p-precio-final" placeholder="Al cerrar la venta" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="p-fecha-venta">Fecha de venta</label>
+            <input type="date" id="p-fecha-venta" />
+          </div>
+        </div>
+        <div class="int-grid-3">
+          <div class="form-group">
+            <label for="p-com-pct">% comisión total</label>
+            <input type="number" id="p-com-pct" placeholder="Ej: 5" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label for="p-com-cap">% captador</label>
+            <input type="number" id="p-com-cap" placeholder="Ej: 2.5" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label for="p-com-ven">% vendedor</label>
+            <input type="number" id="p-com-ven" placeholder="Ej: 2.5" min="0" step="0.1" />
+          </div>
+        </div>
+      </div>
+
+      <div class="int-actions">
+        <a class="btn btn--ghost" href="crm.html">Cancelar</a>
+        <button type="submit" class="btn btn--gold" id="btnGuardar">Guardar propiedad</button>
+      </div>
+    </form>
+
+    <!-- Solo en edición: compartir e interesados -->
+    <div class="int-card" id="compartirBox" style="display:none;">
+      <h3 class="int-card__title">Compartir con un cliente</h3>
+      <p class="int-card__desc">Enlace público a la ficha. Solo funciona si la propiedad está <strong>disponible</strong> y marcada como pública.</p>
+      <div class="compartir">
+        <input type="text" id="linkPublico" readonly />
+        <button type="button" class="btn btn--ghost btn--sm" id="btnCopiarLink">Copiar</button>
+        <a class="btn btn--gold btn--sm" id="btnCompartirWA" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+        <a class="btn btn--ghost btn--sm" id="btnVerFicha" target="_blank" rel="noopener">Ver ficha</a>
+      </div>
+      <p class="form-hint" id="compartirAviso"></p>
+    </div>
+
+    <div class="int-card" id="interesados" style="display:none;">
+      <h3 class="int-card__title">Prospectos interesados</h3>
+      <div id="interesadosWrap"></div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/crm-util.js"></script>
+  <script src="js/crm-auth.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="../colonias.js"></script>
+  <script src="js/valuacion-core.js"></script>
+  <script src="js/propiedad-form-ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estimador de Valor — Legio Inmobiliaria</title>
+  <meta name="description" content="Descubre el valor aproximado de tu propiedad en León y el Bajío. Estimado gratuito e instantáneo con Legio Inmobiliaria." />
+
+  <!-- Favicon (SVG en línea: no requiere archivo externo) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph / Twitter (para compartir en WhatsApp y redes) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Legio Inmobiliaria" />
+  <meta property="og:title" content="Estimador de Valor — Legio Inmobiliaria" />
+  <meta property="og:description" content="Descubre el valor aproximado de tu propiedad en León y el Bajío. Gratis e instantáneo." />
+  <!-- TODO: reemplaza con la URL real del sitio y una imagen 1200x630 -->
+  <meta property="og:url" content="https://legioinmobiliaria.mx/estimador.html" />
+  <meta property="og:image" content="https://legioinmobiliaria.mx/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Estimador de Valor — Legio Inmobiliaria" />
+  <meta name="twitter:description" content="Descubre el valor aproximado de tu propiedad en León y el Bajío. Gratis e instantáneo." />
+  <meta name="twitter:image" content="https://legioinmobiliaria.mx/og-image.jpg" />
+
+  <!-- IDs de tracking. Si quedan vacíos, NO se carga nada (ver script.js). -->
+  <script>
+    window.GA_ID = '';    // TODO: Google Analytics 4, ej. 'G-XXXXXXXXXX'
+    window.PIXEL_ID = ''; // TODO: Meta Pixel, ej. '1234567890'
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="index.html" class="nav__logo">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+      </a>
+      <nav class="nav__links">
+        <a href="propiedades.html">Propiedades</a>
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#como-trabajamos">Cómo trabajamos</a>
+        <a href="index.html#guias">Guías</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+      <a href="index.html#contacto" class="btn btn--gold nav__cta">Contactar Asesor</a>
+      <button class="nav__burger" id="burger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobileMenu">
+      <a href="propiedades.html" class="nav__mobile-link">Propiedades</a>
+      <a href="index.html#servicios" class="nav__mobile-link">Servicios</a>
+      <a href="index.html#como-trabajamos" class="nav__mobile-link">Cómo trabajamos</a>
+      <a href="index.html#guias" class="nav__mobile-link">Guías</a>
+      <a href="index.html#contacto" class="nav__mobile-link">Contacto</a>
+      <a href="index.html#contacto" class="btn btn--gold nav__mobile-cta">Contactar Asesor</a>
+    </div>
+  </header>
+
+  <!-- ===== HERO PEQUEÑO ===== -->
+  <section class="est-hero">
+    <div class="est-hero__overlay"></div>
+    <div class="est-hero__content container">
+      <p class="hero__eyebrow">Gratis e instantáneo</p>
+      <h1 class="est-hero__title">Descubre el Valor<br>de tu Propiedad</h1>
+      <p class="est-hero__sub">Responde unas preguntas sobre tu inmueble y obtén un estimado de valor en segundos. Ves el resultado sin registrarte.</p>
+    </div>
+  </section>
+
+  <!-- ===== ESTIMADOR ===== -->
+  <section class="section section--light est-section">
+    <div class="container container--narrow">
+
+      <!-- Progress Bar -->
+      <div class="est-progress" id="estProgress">
+        <div class="est-progress__step active" data-step="1">
+          <div class="est-progress__circle">1</div>
+          <span>Tu propiedad</span>
+        </div>
+        <div class="est-progress__line"></div>
+        <div class="est-progress__step" data-step="2">
+          <div class="est-progress__circle">2</div>
+          <span>Tu estimado</span>
+        </div>
+        <div class="est-progress__line"></div>
+        <div class="est-progress__step" data-step="3">
+          <div class="est-progress__circle">3</div>
+          <span>Listo</span>
+        </div>
+      </div>
+
+      <!-- PASO 1: Datos de la propiedad -->
+      <div class="est-card" id="step1">
+        <h2 class="est-card__title">Cuéntanos sobre tu propiedad</h2>
+        <p class="est-card__desc">Entre más detalles, más preciso será tu estimado. No pedimos datos de contacto para ver el resultado.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="e-tipo">Tipo de propiedad *</label>
+            <select id="e-tipo">
+              <option value="">Selecciona</option>
+              <option value="casa">Casa</option>
+              <option value="departamento">Departamento</option>
+              <option value="local">Local comercial</option>
+              <option value="terreno">Terreno</option>
+            </select>
+            <span class="form-error" id="err-tipo"></span>
+          </div>
+          <div class="form-group">
+            <label for="e-cp">Código postal *</label>
+            <input type="text" id="e-cp" placeholder="Ej: 37150" maxlength="5" inputmode="numeric" autocomplete="postal-code" />
+            <span class="est-cp-ciudad" id="cp-ciudad"></span>
+            <span class="form-error" id="err-cp"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="e-colonia">Colonia *</label>
+          <select id="e-colonia" disabled>
+            <option value="">Ingresa tu código postal primero</option>
+          </select>
+          <span class="form-error" id="err-colonia"></span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="e-m2">M² construidos *</label>
+            <input type="number" id="e-m2" placeholder="Ej: 120" min="20" max="5000" />
+            <span class="form-error" id="err-m2"></span>
+          </div>
+          <div class="form-group" id="group-m2t">
+            <label for="e-m2t">M² de terreno</label>
+            <input type="number" id="e-m2t" placeholder="Ej: 200" min="0" max="10000" />
+          </div>
+        </div>
+
+        <div class="form-row" id="row-recamaras">
+          <div class="form-group">
+            <label for="e-rec">Recámaras *</label>
+            <select id="e-rec">
+              <option value="">Núm.</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5 o más</option>
+            </select>
+            <span class="form-error" id="err-rec"></span>
+          </div>
+          <div class="form-group">
+            <label for="e-ban">Baños *</label>
+            <select id="e-ban">
+              <option value="">Núm.</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4 o más</option>
+            </select>
+            <span class="form-error" id="err-ban"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="e-caj">Cajones de estacionamiento</label>
+            <select id="e-caj">
+              <option value="0">Sin cajón</option>
+              <option value="1">1 cajón</option>
+              <option value="2">2 cajones</option>
+              <option value="3">3 o más</option>
+            </select>
+          </div>
+          <div class="form-group" id="group-piso">
+            <label for="e-piso">Nivel del departamento</label>
+            <select id="e-piso">
+              <option value="medio">Piso medio (1–6)</option>
+              <option value="alto">Piso alto (7 o más)</option>
+              <option value="bajo">Planta baja sin vista</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="e-antig">Antigüedad aproximada *</label>
+            <select id="e-antig">
+              <option value="">Selecciona</option>
+              <option value="nueva">Menos de 5 años</option>
+              <option value="reciente">5 a 15 años</option>
+              <option value="media">15 a 30 años</option>
+              <option value="antigua">Más de 30 años</option>
+            </select>
+            <span class="form-error" id="err-antig"></span>
+          </div>
+          <div class="form-group">
+            <label for="e-conservacion">Estado de conservación *</label>
+            <select id="e-conservacion">
+              <option value="">Selecciona</option>
+              <option value="excelente">Excelente — como nuevo / recién remodelado</option>
+              <option value="buena">Buena — bien mantenido, sin daños</option>
+              <option value="regular">Regular — algo de desgaste visible</option>
+              <option value="reparaciones">Necesita reparaciones — daños evidentes</option>
+            </select>
+            <span class="form-error" id="err-conservacion"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="e-calidad">Calidad de acabados</label>
+            <select id="e-calidad">
+              <option value="lujo">Lujo — premium / de diseño</option>
+              <option value="alta">Alta — materiales por encima del promedio</option>
+              <option value="media" selected>Media — estándar</option>
+              <option value="economica">Económica — básica / de interés social</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="e-ubicacion">Ubicación en la colonia</label>
+            <select id="e-ubicacion">
+              <option value="privada">Privada / coto cerrado</option>
+              <option value="avenida">Sobre avenida principal</option>
+              <option value="esquina">Esquina</option>
+              <option value="interior" selected>Interior / calle común</option>
+              <option value="ruidosa">Zona ruidosa / poco favorable</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Extras (selecciona los que apliquen)</label>
+          <div class="est-checks">
+            <label class="est-check">
+              <input type="checkbox" value="alberca" /> Alberca
+            </label>
+            <label class="est-check">
+              <input type="checkbox" value="jardin" /> Jardín
+            </label>
+            <label class="est-check">
+              <input type="checkbox" value="vigilancia" /> Fraccionamiento con vigilancia
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn--gold btn--lg btn--full" onclick="calcular()">
+          Ver mi estimado
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- PASO 2: Resultado + captura de contacto -->
+      <div class="est-card est-card--hidden est-card--result" id="step2">
+        <div class="est-result__header">
+          <div class="est-result__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 4L30 16L44 18L34 28L36 42L24 36L12 42L14 28L4 18L18 16L24 4Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="est-result__label">Estimado de valor para</p>
+            <h2 class="est-result__name" id="res-nombre">tu propiedad</h2>
+          </div>
+        </div>
+
+        <div class="est-result__range">
+          <p class="est-result__range-label">Valor estimado de mercado</p>
+          <div class="est-result__values">
+            <div class="est-result__value">
+              <span class="est-result__val-label">Mínimo</span>
+              <span class="est-result__val-num" id="res-min">—</span>
+            </div>
+            <div class="est-result__divider">–</div>
+            <div class="est-result__value">
+              <span class="est-result__val-label">Máximo</span>
+              <span class="est-result__val-num" id="res-max">—</span>
+            </div>
+          </div>
+          <p class="est-result__mid-label">Valor central estimado: <strong id="res-mid">—</strong></p>
+
+          <div class="est-range-bar" id="resBar">
+            <div class="est-range-bar__track">
+              <div class="est-range-bar__fill" id="resBarFill"></div>
+              <div class="est-range-bar__marker" id="resBarMarker"><span>Valor central</span></div>
+            </div>
+            <div class="est-range-bar__ends">
+              <span id="resBarMin">—</span>
+              <span id="resBarMax">—</span>
+            </div>
+          </div>
+
+          <p class="est-result__credibility">Estimado calculado con valores de mercado de la zona y las características que capturaste. Una valuación profesional Legio considera, además, la visita física y comparables recientes.</p>
+        </div>
+
+        <div class="est-result__detail" id="res-detalle"></div>
+
+        <!-- CAPTURA DE CONTACTO: intercambio por el informe completo -->
+        <div class="est-contact">
+          <h3 class="est-contact__title">Recibe tu informe completo por WhatsApp</h3>
+          <p class="est-contact__text">Este número es un aproximado. Un asesor puede enviarte el <strong>informe completo</strong> con comparables reales de tu zona y una estrategia de precio — <strong>gratis y sin compromiso</strong>. Solo dinos a dónde enviarlo.</p>
+
+          <!-- Campo trampa para bots: invisible para personas. No lo quites. -->
+          <input type="text" name="website" id="e-website" class="hp-campo" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="form-group">
+            <label for="e-nombre">Nombre completo *</label>
+            <input type="text" id="e-nombre" placeholder="Tu nombre completo" />
+            <span class="form-error" id="err-nombre"></span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="e-tel">Teléfono (WhatsApp) *</label>
+              <input type="tel" id="e-tel" placeholder="477 000 0000" />
+              <span class="form-error" id="err-tel"></span>
+            </div>
+            <div class="form-group">
+              <label for="e-email">Correo electrónico *</label>
+              <input type="email" id="e-email" placeholder="tu@correo.com" />
+              <span class="form-error" id="err-email"></span>
+            </div>
+          </div>
+
+          <button class="btn btn--whatsapp btn--lg btn--full" onclick="enviarInforme()">
+            <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.119 1.532 5.845L.057 23.856a.5.5 0 0 0 .611.611l6.011-1.475A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.176-1.432l-.371-.22-3.845.944.964-3.784-.24-.386A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            Recibir mi informe completo
+          </button>
+          <p class="est-contact__note">Al enviar aceptas nuestro <a href="aviso-privacidad.html">aviso de privacidad</a>.</p>
+        </div>
+
+        <div class="est-result__secondary">
+          <button class="btn btn--ghost-link" onclick="reiniciar()">Hacer otro estimado</button>
+          <a href="index.html" class="btn btn--ghost-link">Volver al inicio</a>
+        </div>
+
+        <div class="est-result__disclaimer">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+          Este es un estimado referencial automático basado en datos del mercado del Bajío. El valor real puede variar según condiciones específicas de la propiedad. Para una valuación profesional y precisa, contacta a un asesor Legio.
+        </div>
+      </div>
+
+      <!-- PASO 3: Confirmación -->
+      <div class="est-card est-card--hidden est-confirm" id="step3">
+        <div class="est-confirm__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="est-confirm__title">¡Listo<span id="confirm-nombre"></span>!</h2>
+        <p class="est-confirm__text">Abrimos WhatsApp con tu solicitud. Si no se abrió, revisa tu navegador. Un asesor de Legio te contactará muy pronto con tu informe completo de valor.</p>
+        <div class="est-confirm__actions">
+          <a href="index.html" class="btn btn--gold btn--lg">Volver al inicio</a>
+          <a href="propiedades.html" class="btn btn--outline-navy">Ver propiedades</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <span class="footer__logo"><span class="logo-legio">LEGIO</span> Inmobiliaria</span>
+          <p>Venta, renta y asesoría inmobiliaria en León, Guanajuato y todo el Bajío. Te acompañamos de principio a fin.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Sitio</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="propiedades.html">Propiedades</a></li>
+            <li><a class="footer__link" href="estimador.html">Valúa tu propiedad</a></li>
+            <li><a class="footer__link" href="guia-documentos-venta.html">Documentos para vender</a></li>
+            <li><a class="footer__link" href="guia-tiempo-venta-leon.html">¿Cuánto tarda venderse?</a></li>
+            <li><a class="footer__link" href="guia-errores-precio.html">Errores de precio</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal y contacto</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="aviso-privacidad.html">Aviso de privacidad</a></li>
+            <li><a class="footer__link" href="index.html#contacto">Contacto</a></li>
+            <li><a class="footer__link" href="https://wa.me/524770000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__bottom">© <span id="footerYear">2024</span> Legio Inmobiliaria. Todos los derechos reservados. León, Guanajuato, México.</p>
+    </div>
+  </footer>
+
+  <!-- Supabase (captura de leads del estimador en el CRM) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="interno/js/supabase-config.js"></script>
+  <script src="interno/js/crm-data.js"></script>
+  <script src="script.js"></script>
+  <script src="colonias.js"></script>
+  <script src="interno/js/valuacion-core.js"></script>
+  <script src="estimador.js"></script>
+</body>
+</html>

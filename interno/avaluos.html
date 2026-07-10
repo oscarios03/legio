@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Avalúos — Legio Inmobiliaria (Interno)</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="interno.css" />
+</head>
+<body class="int">
+
+  <!-- Barra superior (solo con sesión) -->
+  <header class="int-top" id="topBar" style="display:none;">
+    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
+      <div class="int-top__brand">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag">Avalúos</span>
+      </div>
+      <div class="int-top__actions">
+        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← CRM</a>
+        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LOGIN (solo aplica si AUTH_ENABLED = true en auth.js) -->
+  <section class="int-login int-card" id="loginCard">
+    <div class="int-login__logo">
+      <span class="logo-legio">LEGIO</span>
+      <div class="int-top__tag" style="color:var(--gold);">Herramienta de avalúos · acceso interno</div>
+    </div>
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="pwd">Contraseña del equipo</label>
+        <input type="password" id="pwd" placeholder="Ingresa la contraseña" autocomplete="current-password" />
+      </div>
+      <div class="int-login__error" id="loginError"></div>
+      <button type="submit" class="btn btn--gold btn--full">Entrar</button>
+    </form>
+  </section>
+
+  <!-- DASHBOARD -->
+  <main class="int-wrap" id="dashboard" style="display:none;">
+    <div class="int-head">
+      <h1>Avalúos</h1>
+      <div class="int-top__actions">
+        <input type="file" id="importFile" accept="application/json" style="display:none;" />
+        <button class="btn btn--ghost btn--sm" id="btnImport">Importar respaldo</button>
+        <button class="btn btn--ghost btn--sm" id="btnExport">Exportar respaldo</button>
+        <a class="btn btn--gold btn--sm" href="avaluo.html">+ Nuevo avalúo</a>
+      </div>
+    </div>
+
+    <div id="modoAviso"></div>
+    <div id="listWrap"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/dashboard-ui.js"></script>
+</body>
+</html>

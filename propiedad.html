@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- El título y la descripción se completan por JS con los datos reales de la propiedad. -->
+  <title>Propiedad — Legio Inmobiliaria</title>
+  <meta name="description" id="metaDesc" content="Detalle de propiedad en venta o renta en el Bajío con Legio Inmobiliaria." />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Legio Inmobiliaria" />
+  <meta property="og:title" id="ogTitle" content="Propiedad — Legio Inmobiliaria" />
+  <meta property="og:description" id="ogDesc" content="Detalle de propiedad en el Bajío." />
+  <meta property="og:image" id="ogImage" content="" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="index.html" class="nav__logo">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+      </a>
+      <nav class="nav__links">
+        <a href="propiedades.html">Propiedades</a>
+        <a href="index.html#servicios">Servicios</a>
+        <a href="index.html#como-trabajamos">Cómo trabajamos</a>
+        <a href="index.html#guias">Guías</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+      <a href="estimador.html" class="btn btn--gold nav__cta">Valúa tu Propiedad</a>
+      <button class="nav__burger" id="burger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobileMenu">
+      <a href="propiedades.html" class="nav__mobile-link">Propiedades</a>
+      <a href="index.html#servicios" class="nav__mobile-link">Servicios</a>
+      <a href="index.html#como-trabajamos" class="nav__mobile-link">Cómo trabajamos</a>
+      <a href="index.html#guias" class="nav__mobile-link">Guías</a>
+      <a href="index.html#contacto" class="nav__mobile-link">Contacto</a>
+      <a href="estimador.html" class="btn btn--gold nav__mobile-cta">Valúa tu Propiedad</a>
+    </div>
+  </header>
+
+  <!-- ===== DETALLE DE PROPIEDAD ===== -->
+  <main class="section section--light pd-main">
+    <div class="container">
+      <a href="propiedades.html" class="pd-back">← Volver a propiedades</a>
+      <!-- El contenido se genera desde propiedad.js según ?id= -->
+      <div id="propDetalle" class="pd-wrap">
+        <p class="pd-loading">Cargando propiedad…</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox de fotos (se controla por JS) -->
+  <div class="pd-lightbox" id="lightbox" hidden>
+    <button class="pd-lightbox__close" id="lbClose" aria-label="Cerrar">×</button>
+    <button class="pd-lightbox__nav pd-lightbox__nav--prev" id="lbPrev" aria-label="Anterior">‹</button>
+    <img class="pd-lightbox__img" id="lbImg" src="" alt="" />
+    <button class="pd-lightbox__nav pd-lightbox__nav--next" id="lbNext" aria-label="Siguiente">›</button>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <span class="footer__logo"><span class="logo-legio">LEGIO</span> Inmobiliaria</span>
+          <p>Venta, renta y asesoría inmobiliaria en León, Guanajuato y todo el Bajío. Te acompañamos de principio a fin.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Sitio</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="propiedades.html">Propiedades</a></li>
+            <li><a class="footer__link" href="estimador.html">Valúa tu propiedad</a></li>
+            <li><a class="footer__link" href="guia-documentos-venta.html">Documentos para vender</a></li>
+            <li><a class="footer__link" href="guia-tiempo-venta-leon.html">¿Cuánto tarda venderse?</a></li>
+            <li><a class="footer__link" href="guia-errores-precio.html">Errores de precio</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal y contacto</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="aviso-privacidad.html">Aviso de privacidad</a></li>
+            <li><a class="footer__link" href="index.html#contacto">Contacto</a></li>
+            <li><a class="footer__link" href="https://wa.me/524770000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__bottom">© <span id="footerYear">2024</span> Legio Inmobiliaria. Todos los derechos reservados. León, Guanajuato, México.</p>
+    </div>
+  </footer>
+
+  <!-- Supabase (ficha en vivo desde el CRM) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="interno/js/supabase-config.js"></script>
+  <script src="interno/js/crm-data.js"></script>
+  <script src="script.js"></script>
+  <script src="propiedad.js"></script>
+</body>
+</html>

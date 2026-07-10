@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legio Inmobiliaria — Vende, Renta o Compra en León y el Bajío</title>
+  <meta name="description" content="Inmobiliaria en León, Guanajuato y el Bajío. Propiedades en venta y renta, asesoría completa y opinión de valor gratuita. Acompañamiento de principio a fin." />
+
+  <!-- Favicon (SVG en línea: no requiere archivo externo) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph / Twitter (para compartir en WhatsApp y redes) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Legio Inmobiliaria" />
+  <meta property="og:title" content="Legio Inmobiliaria — Vende, Renta o Compra en León y el Bajío" />
+  <meta property="og:description" content="Propiedades en venta y renta en León, Guanajuato y el Bajío. Asesoría completa y opinión de valor gratuita." />
+  <!-- TODO: reemplaza con la URL real del sitio y una imagen 1200x630 -->
+  <meta property="og:url" content="https://legioinmobiliaria.mx/" />
+  <meta property="og:image" content="https://legioinmobiliaria.mx/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Legio Inmobiliaria — Vende, Renta o Compra en León y el Bajío" />
+  <meta name="twitter:description" content="Propiedades en venta y renta en León, Guanajuato y el Bajío. Opinión de valor gratuita." />
+  <meta name="twitter:image" content="https://legioinmobiliaria.mx/og-image.jpg" />
+
+  <!-- Datos estructurados para buscadores (Google) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Legio Inmobiliaria",
+    "description": "Venta y renta de propiedades en León, Guanajuato y el Bajío. Opinión de valor gratuita.",
+    "url": "https://legioinmobiliaria.mx/",
+    "areaServed": ["León", "Guanajuato", "Silao", "San Francisco del Rincón", "Irapuato", "Salamanca", "Celaya"],
+    "address": { "@type": "PostalAddress", "addressLocality": "León", "addressRegion": "Guanajuato", "addressCountry": "MX" },
+    "openingHours": ["Mo-Fr 09:00-19:00", "Sa 10:00-15:00"]
+  }
+  </script>
+
+  <!-- Datos estructurados de la sección de Preguntas Frecuentes -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "¿Cuánto cobran de comisión?", "acceptedAnswer": { "@type": "Answer", "text": "Nuestra comisión es un porcentaje del precio de venta y solo se cobra cuando la operación se cierra con éxito. Antes de firmar cualquier acuerdo te explicamos con transparencia el monto y qué incluye." } },
+      { "@type": "Question", "name": "¿Piden exclusividad?", "acceptedAnswer": { "@type": "Answer", "text": "Trabajamos con distintos esquemas. La exclusividad nos permite invertir más en la difusión de tu propiedad, pero lo platicamos contigo y elegimos juntos lo que más te convenga." } },
+      { "@type": "Question", "name": "¿Cuánto tarda en venderse una propiedad?", "acceptedAnswer": { "@type": "Answer", "text": "Depende del precio, la zona y el estado del inmueble. Con un precio bien fijado y buena difusión, la mayoría de las propiedades bien presentadas reciben interés en las primeras semanas." } },
+      { "@type": "Question", "name": "¿Tengo que pagar algo por adelantado?", "acceptedAnswer": { "@type": "Answer", "text": "No. La opinión de valor y la asesoría inicial son gratuitas. Nuestra comisión se cobra únicamente al concretar la operación." } },
+      { "@type": "Question", "name": "¿Qué pasa si mi propiedad no se vende?", "acceptedAnswer": { "@type": "Answer", "text": "Revisamos juntos la estrategia: precio, presentación y difusión. Si algo no está funcionando lo ajustamos. No pagas comisión hasta que se cierra la venta." } },
+      { "@type": "Question", "name": "¿Qué documentos necesito para vender?", "acceptedAnswer": { "@type": "Answer", "text": "Principalmente escritura, identificación, predial y agua al corriente y, en su caso, certificado de libertad de gravamen. Tenemos una guía completa y te acompañamos en todo el proceso." } }
+    ]
+  }
+  </script>
+
+  <!-- IDs de tracking. Si quedan vacíos, NO se carga nada (ver script.js). -->
+  <script>
+    window.GA_ID = '';    // TODO: Google Analytics 4, ej. 'G-XXXXXXXXXX'
+    window.PIXEL_ID = ''; // TODO: Meta Pixel, ej. '1234567890'
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <!-- NOTA: este bloque nav se repite en todas las páginas. Si lo cambias aquí, actualízalo también en las demás. -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="#inicio" class="nav__logo">
+        <span class="logo-legio">LEGIO</span>
+        <span class="logo-sub">Inmobiliaria</span>
+      </a>
+      <nav class="nav__links">
+        <a href="propiedades.html">Propiedades</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#como-trabajamos">Cómo trabajamos</a>
+        <a href="#guias">Guías</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+      <a href="estimador.html" class="btn btn--gold nav__cta">Valúa tu Propiedad</a>
+      <button class="nav__burger" id="burger" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav__mobile" id="mobileMenu">
+      <a href="propiedades.html" class="nav__mobile-link">Propiedades</a>
+      <a href="#servicios" class="nav__mobile-link">Servicios</a>
+      <a href="#como-trabajamos" class="nav__mobile-link">Cómo trabajamos</a>
+      <a href="#guias" class="nav__mobile-link">Guías</a>
+      <a href="#contacto" class="nav__mobile-link">Contacto</a>
+      <a href="estimador.html" class="btn btn--gold nav__mobile-cta">Valúa tu Propiedad</a>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="inicio">
+    <div class="hero__overlay"></div>
+    <div class="hero__content container">
+      <p class="hero__eyebrow">Especialistas en el Bajío</p>
+      <h1 class="hero__title">Tu próxima casa,<br>o el mejor trato<br>por la tuya</h1>
+      <p class="hero__sub">Compra, vende o renta en León y el Bajío con un equipo que te acompaña en cada paso. Propiedades verificadas, asesoría clara y sin presiones.</p>
+      <div class="hero__actions">
+        <a href="propiedades.html" class="btn btn--gold btn--lg">Ver Propiedades</a>
+        <a href="#como-trabajamos" class="btn btn--outline btn--lg">Cómo trabajamos</a>
+      </div>
+      <div class="hero__trust">
+        <!-- TODO: confirmar que estas cifras son reales y verificables -->
+        <div class="trust-item"><strong>+200</strong><span>Propiedades vendidas</span></div>
+        <div class="trust-sep"></div>
+        <div class="trust-item"><strong>+8 años</strong><span>En el mercado</span></div>
+        <div class="trust-sep"></div>
+        <div class="trust-item"><strong>7 ciudades</strong><span>En el Bajío</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROPIEDADES DESTACADAS ===== -->
+  <section class="section section--white" id="propiedades">
+    <div class="container">
+      <p class="section__eyebrow">Nuestro portafolio</p>
+      <h2 class="section__title">Propiedades destacadas</h2>
+      <p class="section__desc">Una selección de lo que tenemos disponible hoy en el Bajío. Compradores activos buscando propiedades como la tuya.</p>
+      <!-- Las tarjetas se generan desde propiedades.js -->
+      <div class="properties__grid" id="gridDestacadas"></div>
+      <div class="section__cta-row">
+        <a href="propiedades.html" class="btn btn--outline-navy">Ver todas las propiedades</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICIOS ===== -->
+  <section class="section section--light" id="servicios">
+    <div class="container">
+      <p class="section__eyebrow">Lo que hacemos</p>
+      <h2 class="section__title">Servicios Inmobiliarios</h2>
+      <p class="section__desc">Desde la primera valoración hasta la firma del contrato, te acompañamos en cada paso.</p>
+      <div class="services__grid">
+
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 20L24 6L42 20V42H30V30H18V42H6V20Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Venta de Propiedades</h3>
+          <p>Valuamos, difundimos y negociamos tu propiedad para lograr el mejor precio en el menor tiempo posible.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="14" width="36" height="28" rx="2" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M16 14V10C16 7.79 17.79 6 20 6H28C30.21 6 32 7.79 32 10V14" stroke="currentColor" stroke-width="2.5"/>
+              <path d="M24 26V34M20 30H28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Renta de Propiedades</h3>
+          <p>Gestionamos la renta de tu inmueble: inquilino calificado, contrato profesional y seguimiento continuo.</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 22H8C6.9 22 6 22.9 6 24V40C6 41.1 6.9 42 8 42H14M14 22V42M14 22L26 8L38 22M14 42H34C35.1 42 36 41.1 36 40V24C36 22.9 35.1 22 34 22H26M26 22V16" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Asesoría Legal y Notarial</h3>
+          <p>Revisamos documentos, contratos y escrituras, y te acompañamos hasta la firma ante notario. Cero sorpresas legales.</p>
+        </div>
+
+        <div class="service-card service-card--featured">
+          <div class="service-card__badge">Gratis</div>
+          <div class="service-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 4L30 16L44 18L34 28L36 42L24 36L12 42L14 28L4 18L18 16L24 4Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Opinión de Valor Gratuita</h3>
+          <p>Analizamos el mercado actual y te damos el precio real de tu propiedad — sin costo y sin compromiso.</p>
+          <a href="estimador.html" class="btn btn--gold service-card__cta">Estimar ahora</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CÓMO TRABAJAMOS ===== -->
+  <section class="section section--white" id="como-trabajamos">
+    <div class="container">
+      <p class="section__eyebrow">Nuestro método</p>
+      <h2 class="section__title">Cómo trabajamos</h2>
+      <p class="section__desc">Un proceso claro y probado. Sabes exactamente qué pasa en cada etapa de tu operación.</p>
+      <div class="process__grid">
+        <div class="process-card">
+          <div class="process-card__num">1</div>
+          <h3>Valoración</h3>
+          <p>Analizamos tu propiedad y el mercado de la zona para fijar un precio realista y competitivo.</p>
+        </div>
+        <div class="process-card">
+          <div class="process-card__num">2</div>
+          <h3>Estrategia de precio</h3>
+          <p>Definimos juntos el precio de salida que atrae compradores sin dejar dinero sobre la mesa.</p>
+        </div>
+        <div class="process-card">
+          <div class="process-card__num">3</div>
+          <h3>Difusión</h3>
+          <p>Fotografía, portales, redes y nuestra red de contactos. Tu propiedad llega a quien la busca.</p>
+        </div>
+        <div class="process-card">
+          <div class="process-card__num">4</div>
+          <h3>Visitas filtradas</h3>
+          <p>Calificamos a cada prospecto para que solo recibas visitas de compradores serios.</p>
+        </div>
+        <div class="process-card">
+          <div class="process-card__num">5</div>
+          <h3>Cierre ante notario</h3>
+          <p>Negociamos, revisamos documentos y te acompañamos hasta la firma. Operación segura.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VENDIDAS RECIENTEMENTE ===== -->
+  <section class="section section--light" id="vendidas">
+    <div class="container">
+      <p class="section__eyebrow">Resultados reales</p>
+      <h2 class="section__title">Vendidas recientemente</h2>
+      <p class="section__desc">Números concretos de operaciones cerradas. Así se ve nuestro trabajo.</p>
+      <div class="cases__grid">
+        <!-- TODO: reemplazar con casos reales (colonia, días, % del precio de lista) -->
+        <div class="case-card">
+          <span class="case-card__tag">Venta — Casa</span>
+          <h3 class="case-card__title">Casa familiar</h3>
+          <p class="case-card__loc">Gran Jardín, León</p>
+          <div class="case-card__stats">
+            <div class="case-card__stat"><span class="case-card__stat-num">42</span><span class="case-card__stat-label">días en mercado</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">98%</span><span class="case-card__stat-label">del precio de lista</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">3</span><span class="case-card__stat-label">ofertas recibidas</span></div>
+          </div>
+        </div>
+        <div class="case-card">
+          <span class="case-card__tag">Venta — Departamento</span>
+          <h3 class="case-card__title">Departamento con vista</h3>
+          <p class="case-card__loc">Punto Verde, León</p>
+          <div class="case-card__stats">
+            <div class="case-card__stat"><span class="case-card__stat-num">28</span><span class="case-card__stat-label">días en mercado</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">100%</span><span class="case-card__stat-label">del precio de lista</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">5</span><span class="case-card__stat-label">visitas calificadas</span></div>
+          </div>
+        </div>
+        <div class="case-card">
+          <span class="case-card__tag">Venta — Casa</span>
+          <h3 class="case-card__title">Casa en fraccionamiento</h3>
+          <p class="case-card__loc">Villas de Irapuato, Irapuato</p>
+          <div class="case-card__stats">
+            <div class="case-card__stat"><span class="case-card__stat-num">55</span><span class="case-card__stat-label">días en mercado</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">96%</span><span class="case-card__stat-label">del precio de lista</span></div>
+            <div class="case-card__stat"><span class="case-card__stat-num">2</span><span class="case-card__stat-label">ofertas recibidas</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POR QUÉ LEGIO ===== -->
+  <section class="section section--dark" id="por-que">
+    <div class="container">
+      <p class="section__eyebrow section__eyebrow--light">Nuestra diferencia</p>
+      <h2 class="section__title section__title--light">Por qué elegir Legio</h2>
+      <div class="why__grid">
+        <div class="why-card">
+          <div class="why-card__num">01</div>
+          <h3>Cobertura Regional</h3>
+          <p>Operamos en todo el Bajío: León, Guanajuato, Silao, San Francisco del Rincón, Irapuato, Salamanca y Celaya.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-card__num">02</div>
+          <h3>Proceso Transparente</h3>
+          <p>Informes claros en cada etapa. Sabrás exactamente qué está pasando con tu propiedad en todo momento.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-card__num">03</div>
+          <h3>Acompañamiento Completo</h3>
+          <p>Desde la valoración hasta la firma ante notario. Un asesor dedicado a tu operación de inicio a fin.</p>
+        </div>
+      </div>
+
+      <div class="coverage">
+        <h3 class="coverage__title">Ciudades donde operamos</h3>
+        <div class="coverage__tags">
+          <span class="tag">León, GTO</span>
+          <span class="tag">Guanajuato</span>
+          <span class="tag">Silao</span>
+          <span class="tag">San Francisco del Rincón</span>
+          <span class="tag">Irapuato</span>
+          <span class="tag">Salamanca</span>
+          <span class="tag">Celaya</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EQUIPO ===== -->
+  <section class="section section--white" id="equipo">
+    <div class="container">
+      <p class="section__eyebrow">Quiénes somos</p>
+      <h2 class="section__title">Conoce a tu equipo</h2>
+      <p class="section__desc">Personas reales de la región que conocen el mercado y responden por su trabajo.</p>
+      <div class="team__grid">
+        <!-- TODO: reemplazar nombres, roles, fotos y descripciones con datos reales.
+             Para foto real: agrega style="background-image:url('img/asesor-1.jpg')" al div __photo y quita las iniciales. -->
+        <div class="team-card">
+          <div class="team-card__photo">LG</div>
+          <h3>Nombre del Asesor</h3>
+          <p class="team-card__role">Director / Asesor</p>
+          <p>Especialista en venta residencial en León y zona metropolitana.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-card__photo">MR</div>
+          <h3>Nombre del Asesor</h3>
+          <p class="team-card__role">Asesor Inmobiliario</p>
+          <p>Enfocado en rentas y administración de propiedades en el Bajío.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-card__photo">JC</div>
+          <h3>Nombre del Asesor</h3>
+          <p class="team-card__role">Asesor Inmobiliario</p>
+          <p>Acompañamiento legal y notarial en cada operación.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIOS ===== -->
+  <section class="section section--light" id="testimonios">
+    <div class="container">
+      <p class="section__eyebrow">Lo que dicen nuestros clientes</p>
+      <h2 class="section__title">Casos de Éxito</h2>
+      <div class="testimonials__grid">
+        <!-- TODO: reemplazar con testimonios reales y verificables -->
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars">★★★★★</div>
+          <p class="testimonial-card__quote">"Tenía mi casa en Gran Jardín en venta por más de un año sin resultados. Legio la vendió en 6 semanas al precio que yo quería. Su estrategia de difusión es diferente a todo lo que había probado."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">MR</div>
+            <div>
+              <strong>María R.</strong>
+              <span>Venta — León, GTO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars">★★★★★</div>
+          <p class="testimonial-card__quote">"Me ayudaron a rentar mi departamento en Silao en menos de un mes. El inquilino pasó por todo el proceso de verificación y llevo 2 años sin ningún problema."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">JL</div>
+            <div>
+              <strong>Jorge L.</strong>
+              <span>Renta — Silao, GTO</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-card__stars">★★★★★</div>
+          <p class="testimonial-card__quote">"Solicité la opinión de valor gratis y quedé sorprendida. Me dieron un análisis detallado del mercado y terminé vendiendo por encima de lo que esperaba."</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">AL</div>
+            <div>
+              <strong>Ana L.</strong>
+              <span>Venta — Irapuato, GTO</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="reviews-cta">
+        <div class="reviews-cta__stars">★★★★★</div>
+        <p class="reviews-cta__text">Clientes satisfechos en todo el Bajío</p>
+        <!-- TODO: cuando tengas tu perfil de Google Reseñas, descomenta este botón y pon la URL real.
+        <a href="URL_REAL_DE_GOOGLE" class="btn btn--outline-navy" target="_blank" rel="noopener">Ver reseñas en Google</a>
+        -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GUÍAS / RECURSOS ===== -->
+  <section class="section section--white" id="guias">
+    <div class="container">
+      <p class="section__eyebrow">Recursos gratuitos</p>
+      <h2 class="section__title">Guías para vender mejor</h2>
+      <p class="section__desc">Todo lo que necesitas saber antes de vender o rentar tu propiedad, explicado sin complicaciones.</p>
+      <div class="guides__grid">
+        <div class="guide-card">
+          <div class="guide-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4H30L38 12V44H12V4Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M30 4V12H38M18 24H32M18 32H32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Documentos para vender</h3>
+          <p>La lista completa de papeles que necesitas para vender tu propiedad en Guanajuato sin contratiempos.</p>
+          <a href="guia-documentos-venta.html" class="guide-card__link">Leer guía →</a>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2.5"/><path d="M24 14V24L31 28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>¿Cuánto tarda venderse?</h3>
+          <p>Cuánto tiempo toma vender una casa en León y qué factores aceleran o retrasan la venta.</p>
+          <a href="guia-tiempo-venta-leon.html" class="guide-card__link">Leer guía →</a>
+        </div>
+        <div class="guide-card">
+          <div class="guide-card__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6V42M24 6L16 14M24 6L32 14M8 42H40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Errores de precio</h3>
+          <p>Los 5 errores más comunes al fijar el precio de una propiedad y cómo evitarlos.</p>
+          <a href="guia-errores-precio.html" class="guide-card__link">Leer guía →</a>
+        </div>
+      </div>
+
+      <!-- Lead magnet -->
+      <div class="lead-magnet">
+        <div class="lead-magnet__info">
+          <h3 class="lead-magnet__title">Guía PDF: Vende tu propiedad al mejor precio</h3>
+          <p class="lead-magnet__text">Descarga gratis nuestra guía con los <strong>10 pasos para vender más rápido y sin errores</strong> en el Bajío. Te la enviamos por WhatsApp al instante.</p>
+        </div>
+        <form class="lead-magnet__form" id="leadMagnetForm" novalidate>
+          <!-- Campo trampa para bots: invisible para personas. No lo quites. -->
+          <input type="text" name="website" class="hp-campo" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <input type="text" id="lm-nombre" placeholder="Tu nombre" aria-label="Nombre" />
+          <input type="tel" id="lm-tel" placeholder="Tu WhatsApp (10 dígitos)" aria-label="Teléfono" />
+          <span class="form-error" id="err-lm"></span>
+          <button type="submit" class="btn btn--gold btn--full">Recibir la guía gratis</button>
+          <p class="lead-magnet__note">Al enviar aceptas nuestro <a href="aviso-privacidad.html">aviso de privacidad</a>. Sin spam.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section section--light" id="faq">
+    <div class="container">
+      <p class="section__eyebrow">Antes de que preguntes</p>
+      <h2 class="section__title">Preguntas frecuentes</h2>
+      <p class="section__desc">Respondemos con transparencia las dudas más comunes de quienes venden con nosotros.</p>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>¿Cuánto cobran de comisión?</summary>
+          <div class="faq-item__body">Nuestra comisión es un porcentaje del precio de venta y solo se cobra cuando la operación se cierra con éxito. Antes de firmar cualquier acuerdo te explicamos con transparencia el monto exacto y qué incluye.</div>
+        </details>
+        <details class="faq-item">
+          <summary>¿Piden exclusividad?</summary>
+          <div class="faq-item__body">Trabajamos con distintos esquemas. La exclusividad nos permite invertir más en la difusión de tu propiedad, pero lo platicamos contigo y elegimos juntos el que más te convenga. Nunca te obligamos.</div>
+        </details>
+        <details class="faq-item">
+          <summary>¿Cuánto tarda en venderse una propiedad?</summary>
+          <div class="faq-item__body">Depende del precio, la zona y el estado del inmueble. Con un precio bien fijado y buena difusión, la mayoría de las propiedades bien presentadas reciben interés en las primeras semanas. Tenemos una <a href="guia-tiempo-venta-leon.html">guía completa sobre plazos</a>.</div>
+        </details>
+        <details class="faq-item">
+          <summary>¿Tengo que pagar algo por adelantado?</summary>
+          <div class="faq-item__body">No. La opinión de valor y la asesoría inicial son totalmente gratuitas. Nuestra comisión se cobra únicamente al concretar la operación, no antes.</div>
+        </details>
+        <details class="faq-item">
+          <summary>¿Qué pasa si mi propiedad no se vende?</summary>
+          <div class="faq-item__body">Revisamos juntos la estrategia: precio, presentación y difusión. Si algo no está funcionando, lo ajustamos. Como no cobramos por adelantado, no pagas comisión hasta que la venta se cierra.</div>
+        </details>
+        <details class="faq-item">
+          <summary>¿Qué documentos necesito para vender?</summary>
+          <div class="faq-item__body">Principalmente escritura, identificación oficial, predial y agua al corriente y, en su caso, certificado de libertad de gravamen. Preparamos una <a href="guia-documentos-venta.html">guía detallada</a> y te acompañamos en todo el proceso.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BANDA CTA ESTIMADOR ===== -->
+  <section class="section section--white" id="estimador-cta">
+    <div class="container">
+      <div class="cta-band">
+        <p class="cta-band__eyebrow">Herramienta gratuita</p>
+        <h2 class="cta-band__title">¿Cuánto vale tu propiedad?</h2>
+        <p class="cta-band__text">Calcúlalo tú mismo en 2 minutos con nuestra herramienta de valuación. Sin registro para ver el resultado.</p>
+        <div class="cta-band__actions">
+          <a href="estimador.html" class="btn btn--gold btn--lg">Calcular el valor ahora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FORMULARIO ===== -->
+  <section class="section section--navy" id="contacto">
+    <div class="container container--narrow">
+      <p class="section__eyebrow section__eyebrow--light">Es gratis y sin compromiso</p>
+      <h2 class="section__title section__title--light">Hablemos de tu propiedad</h2>
+      <p class="section__desc section__desc--light">Déjanos tus datos y un asesor de Legio se comunicará contigo por WhatsApp en menos de 24 horas.</p>
+
+      <form class="contact-form" id="contactForm" novalidate>
+        <!-- Campo trampa para bots: invisible para personas. No lo quites. -->
+        <input type="text" name="website" class="hp-campo" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nombre">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+            <span class="form-error" id="error-nombre"></span>
+          </div>
+          <div class="form-group">
+            <label for="telefono">Teléfono (WhatsApp) *</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="477 000 0000" required />
+            <span class="form-error" id="error-telefono"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ciudad">Ciudad *</label>
+            <select id="ciudad" name="ciudad" required>
+              <option value="">Selecciona tu ciudad</option>
+              <option>León, GTO</option>
+              <option>Guanajuato</option>
+              <option>Silao</option>
+              <option>San Francisco del Rincón</option>
+              <option>Irapuato</option>
+              <option>Salamanca</option>
+              <option>Celaya</option>
+              <option>Otra ciudad</option>
+            </select>
+            <span class="form-error" id="error-ciudad"></span>
+          </div>
+          <div class="form-group">
+            <label for="operacion">¿Qué deseas hacer? *</label>
+            <select id="operacion" name="operacion" required>
+              <option value="">Selecciona una opción</option>
+              <option>Vender mi propiedad</option>
+              <option>Rentar mi propiedad</option>
+              <option>Comprar una propiedad</option>
+              <option>Vender y rentar</option>
+              <option>Solo quiero la opinión de valor</option>
+            </select>
+            <span class="form-error" id="error-operacion"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>¿Ya tienes una propiedad disponible? *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="tiene_propiedad" value="Sí" required />
+              <span>Sí, ya tengo una</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="tiene_propiedad" value="No, aún no" />
+              <span>No, aún no</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="tiene_propiedad" value="Estoy buscando comprar" />
+              <span>Estoy buscando comprar</span>
+            </label>
+          </div>
+          <span class="form-error" id="error-propiedad"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="mensaje">Cuéntanos más (opcional)</label>
+          <textarea id="mensaje" name="mensaje" rows="3" placeholder="Tipo de propiedad, colonia, precio aproximado..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--gold btn--lg btn--full">
+          Enviar por WhatsApp
+          <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.119 1.532 5.845L.057 23.856a.5.5 0 0 0 .611.611l6.011-1.475A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.176-1.432l-.371-.22-3.845.944.964-3.784-.24-.386A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        </button>
+
+        <p class="form-note">Al enviar aceptas nuestro <a href="aviso-privacidad.html" style="color:rgba(255,255,255,.75);text-decoration:underline;">aviso de privacidad</a> y confirmas que deseas ser contactado por Legio Inmobiliaria.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== DATOS DE CONTACTO ===== -->
+  <section class="section section--white" id="info">
+    <div class="container">
+      <div class="contact-info__grid">
+
+        <div class="contact-info__block">
+          <h3>Encuéntranos</h3>
+          <ul class="contact-info__list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              León, Guanajuato, México
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.59 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <!-- TODO: Reemplaza con el número real -->
+              <a href="tel:+524770000000">+52 477 000 0000</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <!-- TODO: Reemplaza con el email real -->
+              <a href="mailto:contacto@legioinmobiliaria.mx">contacto@legioinmobiliaria.mx</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="contact-info__block">
+          <h3>Horario de Atención</h3>
+          <ul class="contact-info__list contact-info__list--hours">
+            <li><span>Lunes – Viernes</span><strong>9:00 – 19:00</strong></li>
+            <li><span>Sábado</span><strong>10:00 – 15:00</strong></li>
+            <li><span>Domingo</span><strong>Con cita previa</strong></li>
+          </ul>
+        </div>
+
+        <div class="contact-info__block">
+          <h3>Síguenos</h3>
+          <div class="social-links">
+            <!-- TODO: Reemplaza los # con las URLs reales de redes -->
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              Facebook
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              Instagram
+            </a>
+            <a href="#" class="social-link" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.75a8.16 8.16 0 0 0 4.77 1.52V6.83a4.85 4.85 0 0 1-1-.14z"/></svg>
+              TikTok
+            </a>
+          </div>
+          <a href="https://wa.me/524770000000" class="btn btn--whatsapp" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.119 1.532 5.845L.057 23.856a.5.5 0 0 0 .611.611l6.011-1.475A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.89 0-3.663-.523-5.176-1.432l-.371-.22-3.845.944.964-3.784-.24-.386A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            Escríbenos por WhatsApp
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <span class="footer__logo"><span class="logo-legio">LEGIO</span> Inmobiliaria</span>
+          <p>Venta, renta y asesoría inmobiliaria en León, Guanajuato y todo el Bajío. Te acompañamos de principio a fin.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Sitio</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="propiedades.html">Propiedades</a></li>
+            <li><a class="footer__link" href="estimador.html">Valúa tu propiedad</a></li>
+            <li><a class="footer__link" href="guia-documentos-venta.html">Documentos para vender</a></li>
+            <li><a class="footer__link" href="guia-tiempo-venta-leon.html">¿Cuánto tarda venderse?</a></li>
+            <li><a class="footer__link" href="guia-errores-precio.html">Errores de precio</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal y contacto</h4>
+          <ul class="footer__links">
+            <li><a class="footer__link" href="aviso-privacidad.html">Aviso de privacidad</a></li>
+            <li><a class="footer__link" href="#contacto">Contacto</a></li>
+            <li><a class="footer__link" href="https://wa.me/524770000000" target="_blank" rel="noopener">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer__bottom">© <span id="footerYear">2024</span> Legio Inmobiliaria. Todos los derechos reservados. León, Guanajuato, México.</p>
+    </div>
+  </footer>
+
+  <!-- Supabase (para catálogo en vivo y captura de leads del CRM) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="interno/js/supabase-config.js"></script>
+  <script src="interno/js/crm-data.js"></script>
+  <script src="script.js"></script>
+  <script src="propiedades.js"></script>
+</body>
+</html>
