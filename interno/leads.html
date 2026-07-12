@@ -88,8 +88,8 @@
 
   <!-- Formulario simple de lead manual (oculto por defecto) -->
   <div id="modal" class="crm-modal" style="display:none;">
-    <div class="int-card" style="max-width:460px;width:100%;margin:0;">
-      <h3 class="int-card__title">Nuevo lead manual</h3>
+    <div class="int-card" style="max-width:460px;width:100%;margin:0;" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+      <h3 class="int-card__title" id="modalTitulo">Nuevo lead manual</h3>
       <div class="form-group"><label for="m-nombre">Nombre *</label><input type="text" id="m-nombre" /></div>
       <div class="int-grid-2">
         <div class="form-group"><label for="m-tel">Teléfono</label><input type="tel" id="m-tel" /></div>

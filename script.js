@@ -11,12 +11,14 @@ if (nav) {
 }
 
 if (burger && menu) {
-  burger.addEventListener('click', () => {
-    menu.classList.toggle('open');
-  });
+  const setExpanded = open => {
+    menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
+  };
+  burger.addEventListener('click', () => setExpanded(!menu.classList.contains('open')));
   // Close mobile menu when a link is clicked
   menu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => menu.classList.remove('open'));
+    link.addEventListener('click', () => setExpanded(false));
   });
 }
 
@@ -137,11 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function showError(id, msg) {
   const el = document.getElementById(id);
   if (el) el.textContent = msg;
+  // Marca el campo asociado (error-<campo>) como inválido para lectores de pantalla.
+  const field = document.getElementById(id.replace(/^error-/, ''));
+  if (field && msg && /^(INPUT|SELECT|TEXTAREA)$/.test(field.tagName)) field.setAttribute('aria-invalid', 'true');
 }
 
 function clearErrors() {
   document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
   document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+  document.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
 }
 
 function validateForm(data) {

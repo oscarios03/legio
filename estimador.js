@@ -98,6 +98,12 @@ function validarPropiedad() {
 function setError(id, msg) {
   const el = document.getElementById(id);
   if (el) el.textContent = msg;
+  // El campo asociado es 'e-<x>' para el error 'err-<x>'. Marca/limpia aria-invalid.
+  const field = document.getElementById('e-' + id.replace(/^err-/, ''));
+  if (field && /^(INPUT|SELECT|TEXTAREA)$/.test(field.tagName)) {
+    if (msg) field.setAttribute('aria-invalid', 'true');
+    else field.removeAttribute('aria-invalid');
+  }
 }
 
 // ── Búsqueda de colonias por CP ──

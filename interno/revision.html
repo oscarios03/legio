@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Avalúos — Legio Inmobiliaria (Interno)</title>
+  <title>Revisión de propiedades — CRM Legio</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f2235'/%3E%3Ctext x='50%25' y='54%25' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c9a24b' text-anchor='middle' dominant-baseline='middle'%3EL%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,35 +14,31 @@
 </head>
 <body class="int">
 
-  <!-- Barra superior (se muestra al confirmar sesión del CRM) -->
-  <header class="int-top" id="topBar" style="display:none;">
+  <header class="int-top">
     <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
       <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span>
-        <span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Avalúos</span>
+        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
+        <span class="int-top__tag">Revisión</span>
       </div>
       <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← CRM</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Cerrar sesión</button>
+        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Panel</a>
+        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
       </div>
     </div>
   </header>
 
-  <!-- DASHBOARD -->
-  <main class="int-wrap" id="dashboard" style="display:none;">
+  <main class="int-wrap">
     <div class="int-head">
-      <h1>Avalúos</h1>
-      <div class="int-top__actions">
-        <input type="file" id="importFile" accept="application/json" style="display:none;" />
-        <button class="btn btn--ghost btn--sm" id="btnImport">Importar respaldo</button>
-        <button class="btn btn--ghost btn--sm" id="btnExport">Exportar respaldo</button>
-        <a class="btn btn--gold btn--sm" href="avaluo.html">+ Nuevo avalúo</a>
-      </div>
+      <h1>Propiedades por revisar</h1>
     </div>
+    <p class="int-card__desc" style="margin:0 0 16px;">
+      Propiedades que un asesor subió o editó y esperan tu visto bueno. Al <strong>aprobar</strong>
+      se publican; puedes <strong>editar</strong> antes de aprobar, <strong>devolver</strong> al
+      asesor con observaciones o <strong>desechar</strong> (se conserva el registro).
+    </p>
 
-    <div id="modoAviso"></div>
-    <div id="listWrap"></div>
+    <p class="crm-count" id="count"></p>
+    <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -50,7 +46,6 @@
   <script src="js/crm-util.js"></script>
   <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/dashboard-ui.js"></script>
+  <script src="js/revision-ui.js"></script>
 </body>
 </html>

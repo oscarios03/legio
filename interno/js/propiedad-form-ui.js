@@ -161,14 +161,37 @@
     $('p-destacada').checked = !!p.destacada;
     $('p-precio-final').value = p.precio_venta_final ?? '';
     $('p-fecha-venta').value = p.fecha_venta || '';
-    $('p-com-pct').value = p.comision_pct ?? '';
-    $('p-com-cap').value = p.comision_captador_pct ?? '';
-    $('p-com-ven').value = p.comision_vendedor_pct ?? '';
+    if (esAdmin) {
+      const com = await Legio.crm.propiedades.getComisiones(id);
+      $('p-com-pct').value = com && com.comision_pct != null ? com.comision_pct : '';
+      $('p-com-cap').value = com && com.comision_captador_pct != null ? com.comision_captador_pct : '';
+      $('p-com-ven').value = com && com.comision_vendedor_pct != null ? com.comision_vendedor_pct : '';
+    }
     mostrarCamposPorTipo();
+    pintarRevision(p);
     fotosGuardadas = await Legio.crm.fotos.listByPropiedad(id);
     renderFotos();
     pintarCompartir(p);
     cargarInteresados(id);
+  }
+
+  // Banner con el estado de revisión y, si aplica, las observaciones del admin.
+  function pintarRevision(p) {
+    const box = $('revBanner');
+    if (!box) return;
+    const est = p.revision_estado;
+    if (est === 'devuelta') {
+      box.innerHTML = `<div class="crm-msg crm-msg--warn"><strong>Propiedad devuelta por un administrador.</strong>` +
+        (p.revision_observaciones ? ` Observaciones: ${esc(p.revision_observaciones)}` : '') +
+        ` Corrige lo indicado y guarda para reenviarla a revisión.</div>`;
+    } else if (est === 'desechada') {
+      box.innerHTML = `<div class="crm-msg crm-msg--err"><strong>Propiedad desechada por un administrador.</strong>` +
+        (p.revision_observaciones ? ` Motivo: ${esc(p.revision_observaciones)}` : '') + `</div>`;
+    } else if (est === 'pendiente' && !esAdmin) {
+      box.innerHTML = `<div class="crm-msg crm-msg--warn">Esta propiedad está <strong>en revisión</strong>. Se publicará cuando un administrador la apruebe.</div>`;
+    } else {
+      box.innerHTML = '';
+    }
   }
 
   // ---- Compartir la ficha pública -------------------------------------------
@@ -250,11 +273,18 @@
     if (esAdmin) {
       obj.precio_venta_final = num($('p-precio-final').value);
       obj.fecha_venta = $('p-fecha-venta').value || null;
-      obj.comision_pct = num($('p-com-pct').value);
-      obj.comision_captador_pct = num($('p-com-cap').value);
-      obj.comision_vendedor_pct = num($('p-com-ven').value);
+      // El admin publica sin pasar por revisión (los % de comisión se guardan aparte).
+      obj.revision_estado = 'aprobada';
     }
     return obj;
+  }
+  // Los % de comisión ahora viven en propiedad_comisiones (tabla con RLS propia).
+  function comisionesDelForm() {
+    return {
+      comision_pct: num($('p-com-pct').value),
+      comision_captador_pct: num($('p-com-cap').value),
+      comision_vendedor_pct: num($('p-com-ven').value),
+    };
   }
   const num = v => (v === '' || v == null) ? null : Number(v);
   const int = v => (v === '' || v == null) ? 0 : parseInt(v, 10);
@@ -269,6 +299,12 @@
       if (propiedadId) obj.id = propiedadId;
       const guardada = await Legio.crm.propiedades.save(obj);
       propiedadId = guardada.id;
+
+      // Comisiones: tabla aparte, solo el admin puede escribirlas (RLS).
+      if (esAdmin) {
+        try { await Legio.crm.propiedades.saveComisiones(propiedadId, comisionesDelForm()); }
+        catch (e) { console.warn('No se pudieron guardar las comisiones:', e.message); }
+      }
 
       // Subir fotos pendientes (caso alta nueva)
       if (fotosPendientes.length) {
@@ -295,7 +331,12 @@
   async function init() {
     if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
     esAdmin = await Legio.crmAuth.isAdmin();
-    if (!esAdmin) $('ventaBox').style.display = 'none';
+    if (!esAdmin) {
+      $('ventaBox').style.display = 'none';
+      // El asesor no publica directo: se oculta el control y se avisa de la revisión.
+      const pub = $('publicacionBox'); if (pub) pub.style.display = 'none';
+      const av = $('revAviso'); if (av) av.style.display = '';
+    }
     mostrarCamposPorTipo();
     try {
       await cargarAsesores();

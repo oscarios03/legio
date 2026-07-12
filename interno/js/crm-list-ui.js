@@ -10,6 +10,16 @@
   const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
   const badge = estatus => `<span class="status-badge status-badge--${estatus}">${cap(estatus)}</span>`;
 
+  // Estado de moderación: solo se muestra cuando no está aprobada.
+  const REV_LABEL = { pendiente: 'En revisión', devuelta: 'Devuelta', desechada: 'Desechada' };
+  function badgeRevision(p) {
+    const est = p.revision_estado;
+    if (!est || est === 'aprobada') return '<span class="td-sub">—</span>';
+    const clase = est === 'pendiente' ? 'hoy' : 'urgente';
+    const tip = p.revision_observaciones ? ' title="' + U.esc(p.revision_observaciones) + '"' : '';
+    return `<span class="pill pill--${clase}"${tip}>${REV_LABEL[est] || est}</span>`;
+  }
+
   // Los días en mercado son la señal más útil para saber qué propiedad está atorada.
   function celdaDias(p) {
     const d = Legio.crm.propiedades.diasEnMercado(p);
@@ -41,7 +51,7 @@
     }
     wrap.innerHTML =
       '<div class="tabla-scroll"><table class="int-table"><thead><tr>' +
-      '<th></th><th>Título</th><th>Tipo</th><th>Ciudad</th><th>Precio</th><th>Estatus</th>' +
+      '<th></th><th>Título</th><th>Tipo</th><th>Ciudad</th><th>Precio</th><th>Estatus</th><th>Revisión</th>' +
       '<th>En mercado</th><th>Interesados</th><th>Público</th><th>Captador</th><th></th>' +
       '</tr></thead><tbody>' +
       lista.map(p => `<tr>
@@ -53,6 +63,7 @@
         <td>${U.esc(p.ciudad || '—')}</td>
         <td>${U.fmtMXN(p.precio)}</td>
         <td>${badge(p.estatus)}</td>
+        <td>${badgeRevision(p)}</td>
         <td>${celdaDias(p)}</td>
         <td>${INTERESADOS[p.id]
               ? `<a href="propiedad-form.html?id=${p.id}#interesados" title="Ver interesados"><strong>${INTERESADOS[p.id]}</strong></a>`

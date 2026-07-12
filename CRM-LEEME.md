@@ -65,9 +65,18 @@ Ambos archivos son idempotentes: se pueden correr varias veces sin romper nada.
 - **Buscador global** arriba: encuentra un prospecto por nombre, teléfono o correo, o una
   propiedad por título o colonia.
 
-### Propiedades (`crm.html`)
+### Propiedades (`crm.html`) y revisión (`revision.html`)
 - Alta/edición, fotos, estatus (borrador → disponible → apartada → vendida),
   captador/vendedor, y (solo admin) % de comisión.
+- **Moderación**: cuando un **asesor** sube o **edita** una propiedad, esta **no se
+  publica directo**: pasa a estado *pendiente* y sale del sitio hasta que un admin la
+  apruebe. Editar una propiedad ya publicada también la baja del sitio hasta la nueva
+  aprobación. Los **admin** publican/editan sin pasar por revisión.
+- **Panel de revisión** (`revision.html`, solo admin): lista lo pendiente y permite
+  **Aprobar** (publica), **Ver/editar** (corregir antes de aprobar), **Devolver** (regresa
+  al asesor con observaciones, no publica) o **Desechar** (se conserva el registro con el
+  motivo). El asesor ve el estado y las observaciones en su lista y al abrir la ficha.
+- La columna **Revisión** en la lista muestra *En revisión / Devuelta / Desechada*.
 - Columna **En mercado**: días que lleva publicada. En rojo si pasa de 180 días.
 - Columna **Interesados**: cuántos prospectos preguntaron por ella.
 - Botón **🔗** para compartir la ficha pública por WhatsApp (copia también el enlace).
@@ -97,7 +106,8 @@ Ambos archivos son idempotentes: se pueden correr varias veces sin romper nada.
 - Ahora se guardan **en la nube** y los ve todo el equipo (antes vivían solo en el
   navegador del asesor). Si tienes avalúos viejos guardados localmente, el panel te
   ofrece un botón para **subirlos a la nube**.
-- Si entras sin sesión del CRM, la herramienta sigue funcionando guardando en el navegador.
+- **Requiere iniciar sesión en el CRM** (mismo usuario/contraseña de Supabase). Ya no hay
+  contraseña compartida: si entras sin sesión te manda al login.
 
 ### Métricas (`metricas.html`, solo admin)
 - Leads por semana y **por origen** (formulario vs estimador vs WhatsApp): te dice qué
@@ -109,6 +119,9 @@ Ambos archivos son idempotentes: se pueden correr varias veces sin romper nada.
 
 ### Comisiones (`comisiones.html`, solo admin)
 - Reporte por periodo con split captador/vendedor, totales y exportación a CSV.
+- Los % de comisión viven en una tabla aparte (`propiedad_comisiones`) protegida por RLS:
+  **cada asesor solo puede ver las comisiones de propiedades donde es captador o vendedor**;
+  el admin las ve todas. La restricción es a nivel de base, no solo en la interfaz.
 
 ### Asesores (`asesores.html`, solo admin)
 - Nombre, teléfono, rol, activo y **Recibe leads** (si entra en el reparto automático).
@@ -156,9 +169,16 @@ el alta del lead**.
   Solo puede **editar las propiedades** donde es captador, vendedor, quien la dio de alta,
   o las que aún no tienen dueño. Esto lo aplican las políticas RLS de la base, no la
   interfaz.
-- Los **campos de comisión** (`comision_*`, `precio_venta_final`, `fecha_venta`) están
-  protegidos por un trigger: si quien escribe no es admin, la base ignora esos valores
-  aunque los mande desde la consola del navegador.
+- Los **datos de venta** (`precio_venta_final`, `fecha_venta`) están protegidos por un
+  trigger: si quien escribe no es admin, la base ignora esos valores aunque los mande
+  desde la consola. Los **% de comisión** viven en `propiedad_comisiones` y solo el admin
+  los escribe; cada asesor solo lee los de sus propiedades (RLS).
+- **Moderación de propiedades**: un trigger obliga a que toda alta/edición de un asesor
+  entre en revisión (`revision_estado='pendiente'`) sin publicarse; solo un admin puede
+  aprobar y publicar. Ni desde la consola puede un asesor publicarse a sí mismo.
+- **Roles protegidos**: un trigger impide que un asesor se auto-promueva a admin (o se
+  reactive) aunque intente `update` directo a su fila desde la consola.
+- Los **avalúos** ya no usan contraseña compartida: exigen sesión real de Supabase.
 - El alta anónima de leads (los formularios del sitio) pasa por un filtro **anti-spam**:
   exige teléfono o correo, rechaza enlaces y nombres kilométricos, y frena las ráfagas
   (mismo contacto más de 3 veces en 10 minutos). Además cada formulario lleva un campo

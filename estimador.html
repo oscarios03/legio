@@ -50,7 +50,7 @@
         <a href="index.html#contacto">Contacto</a>
       </nav>
       <a href="index.html#contacto" class="btn btn--gold nav__cta">Contactar Asesor</a>
-      <button class="nav__burger" id="burger" aria-label="Menú">
+      <button class="nav__burger" id="burger" aria-label="Menú" aria-controls="mobileMenu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -111,13 +111,13 @@
               <option value="local">Local comercial</option>
               <option value="terreno">Terreno</option>
             </select>
-            <span class="form-error" id="err-tipo"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-tipo"></span>
           </div>
           <div class="form-group">
             <label for="e-cp">Código postal *</label>
             <input type="text" id="e-cp" placeholder="Ej: 37150" maxlength="5" inputmode="numeric" autocomplete="postal-code" />
             <span class="est-cp-ciudad" id="cp-ciudad"></span>
-            <span class="form-error" id="err-cp"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-cp"></span>
           </div>
         </div>
 
@@ -126,14 +126,14 @@
           <select id="e-colonia" disabled>
             <option value="">Ingresa tu código postal primero</option>
           </select>
-          <span class="form-error" id="err-colonia"></span>
+          <span class="form-error" role="status" aria-live="polite" id="err-colonia"></span>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="e-m2">M² construidos *</label>
             <input type="number" id="e-m2" placeholder="Ej: 120" min="20" max="5000" />
-            <span class="form-error" id="err-m2"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-m2"></span>
           </div>
           <div class="form-group" id="group-m2t">
             <label for="e-m2t">M² de terreno</label>
@@ -152,7 +152,7 @@
               <option value="4">4</option>
               <option value="5">5 o más</option>
             </select>
-            <span class="form-error" id="err-rec"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-rec"></span>
           </div>
           <div class="form-group">
             <label for="e-ban">Baños *</label>
@@ -163,7 +163,7 @@
               <option value="3">3</option>
               <option value="4">4 o más</option>
             </select>
-            <span class="form-error" id="err-ban"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-ban"></span>
           </div>
         </div>
 
@@ -197,7 +197,7 @@
               <option value="media">15 a 30 años</option>
               <option value="antigua">Más de 30 años</option>
             </select>
-            <span class="form-error" id="err-antig"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-antig"></span>
           </div>
           <div class="form-group">
             <label for="e-conservacion">Estado de conservación *</label>
@@ -208,7 +208,7 @@
               <option value="regular">Regular — algo de desgaste visible</option>
               <option value="reparaciones">Necesita reparaciones — daños evidentes</option>
             </select>
-            <span class="form-error" id="err-conservacion"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-conservacion"></span>
           </div>
         </div>
 
@@ -311,18 +311,18 @@
           <div class="form-group">
             <label for="e-nombre">Nombre completo *</label>
             <input type="text" id="e-nombre" placeholder="Tu nombre completo" />
-            <span class="form-error" id="err-nombre"></span>
+            <span class="form-error" role="status" aria-live="polite" id="err-nombre"></span>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="e-tel">Teléfono (WhatsApp) *</label>
               <input type="tel" id="e-tel" placeholder="477 000 0000" />
-              <span class="form-error" id="err-tel"></span>
+              <span class="form-error" role="status" aria-live="polite" id="err-tel"></span>
             </div>
             <div class="form-group">
               <label for="e-email">Correo electrónico *</label>
               <input type="email" id="e-email" placeholder="tu@correo.com" />
-              <span class="form-error" id="err-email"></span>
+              <span class="form-error" role="status" aria-live="polite" id="err-email"></span>
             </div>
           </div>
 

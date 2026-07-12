@@ -1,7 +1,5 @@
 /* ===== INFORME / DOCUMENTO IMPRIMIBLE ===== */
 (function () {
-  if (!Legio.auth.requireAuth('index.html')) return;
-
   const V = Legio.valuacion;
   const fmtMXN = n => (!n || isNaN(n)) ? '—'
     : new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n);
@@ -128,5 +126,10 @@
   }
 
   document.getElementById('btnPDF').addEventListener('click', () => window.print());
-  render();
+
+  // Exige sesión del CRM (Supabase) antes de mostrar el informe.
+  (async function init() {
+    if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    render();
+  })();
 })();

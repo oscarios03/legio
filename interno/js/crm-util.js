@@ -114,7 +114,10 @@
     // filas: array de objetos. columnas: [['clave','Encabezado'], ...]
     descargarCSV(nombreArchivo, columnas, filas) {
       const escCampo = v => {
-        const s = (v === null || v === undefined) ? '' : String(v);
+        let s = (v === null || v === undefined) ? '' : String(v);
+        // Anti-inyección de fórmulas: un valor que empieza con = + - @ (o tab/CR)
+        // lo interpreta Excel/Sheets como fórmula. Se neutraliza con un apóstrofe.
+        if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
         return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
       };
       const lineas = [columnas.map(c => escCampo(c[1])).join(',')];

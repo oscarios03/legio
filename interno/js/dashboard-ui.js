@@ -13,13 +13,10 @@
   }
 
   function mostrarPantalla() {
-    const authed = Legio.auth.isAuthed();
-    $('loginCard').style.display = authed ? 'none' : '';
-    $('topBar').style.display = authed ? '' : 'none';
-    $('dashboard').style.display = authed ? '' : 'none';
-    // Sin control de acceso no tiene sentido mostrar "Cerrar sesión".
-    if (!Legio.auth.enabled) $('btnLogout').style.display = 'none';
-    if (authed) { avisoModo(); render(); }
+    $('topBar').style.display = '';
+    $('dashboard').style.display = '';
+    avisoModo();
+    render();
   }
 
   /* Los avalúos viven en la nube cuando hay sesión del CRM. Si no la hay, o si
@@ -91,16 +88,7 @@
     });
   }
 
-  // ── Login ──
-  $('loginForm').addEventListener('submit', async e => {
-    e.preventDefault();
-    $('loginError').textContent = '';
-    const ok = await Legio.auth.login($('pwd').value);
-    if (ok) { $('pwd').value = ''; mostrarPantalla(); }
-    else $('loginError').textContent = 'Contraseña incorrecta.';
-  });
-
-  $('btnLogout').addEventListener('click', () => { Legio.auth.logout(); mostrarPantalla(); });
+  $('btnLogout').addEventListener('click', async () => { await Legio.crmAuth.logout(); location.replace('index.html'); });
 
   // ── Exportar / Importar ──
   $('btnExport').addEventListener('click', async () => {
@@ -125,5 +113,9 @@
     e.target.value = '';
   });
 
-  mostrarPantalla();
+  // Requiere sesión del CRM (Supabase). Sin ella, al login del panel.
+  (async function init() {
+    if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    mostrarPantalla();
+  })();
 })();

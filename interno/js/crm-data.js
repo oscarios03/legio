@@ -75,15 +75,67 @@
       check(error);
     },
 
-    // Público (anon): solo publicadas y disponibles.
+    // Público (anon): solo publicadas, disponibles y aprobadas.
     async listPublicas() {
       const { data, error } = await sb().from('propiedades')
         .select('*')
-        .eq('publica', true).eq('estatus', 'disponible')
+        .eq('publica', true).eq('estatus', 'disponible').eq('revision_estado', 'aprobada')
         .order('destacada', { ascending: false })
         .order('created_at', { ascending: false });
       check(error);
       return data || [];
+    },
+
+    // ---- Comisiones (tabla aparte con RLS: el asesor solo ve las suyas) -------
+    // Devuelve {comision_pct, comision_captador_pct, comision_vendedor_pct} o null.
+    async getComisiones(propiedadId) {
+      const { data, error } = await sb().from('propiedad_comisiones')
+        .select('comision_pct, comision_captador_pct, comision_vendedor_pct')
+        .eq('propiedad_id', propiedadId).maybeSingle();
+      if (error) return null;   // sin acceso (no es su propiedad) o no existe
+      return data || null;
+    },
+    // Guarda/actualiza los % de comisión. La RLS solo lo permite al admin.
+    async saveComisiones(propiedadId, pcts) {
+      const payload = { propiedad_id: propiedadId, ...pcts };
+      const { data, error } = await sb().from('propiedad_comisiones')
+        .upsert(payload, { onConflict: 'propiedad_id' }).select().single();
+      check(error);
+      return data;
+    },
+
+    // ---- Moderación (revisión del admin antes de publicar) --------------------
+    async pendientesRevision() {
+      const { data, error } = await sb().from('propiedades')
+        .select('*, captador:asesor_captador_id(nombre), autor:created_by(nombre)')
+        .eq('revision_estado', 'pendiente')
+        .order('updated_at', { ascending: true });
+      check(error);
+      return data || [];
+    },
+
+    // accion ∈ {aprobar, devolver, desechar}. `observaciones` obligatoria para
+    // devolver/desechar (la exige la interfaz).
+    async resolverRevision(id, accion, observaciones) {
+      const payload = { revision_por: await miId(), revision_at: new Date().toISOString() };
+      if (accion === 'aprobar') {
+        payload.revision_estado = 'aprobada';
+        payload.revision_observaciones = null;
+        payload.publica = true;                 // aprobar = publicar (RLS anon exige disponible)
+      } else if (accion === 'devolver') {
+        payload.revision_estado = 'devuelta';
+        payload.revision_observaciones = observaciones || null;
+        payload.publica = false;
+      } else if (accion === 'desechar') {
+        payload.revision_estado = 'desechada';
+        payload.revision_observaciones = observaciones || null;
+        payload.publica = false;
+      } else {
+        throw new Error('Acción de revisión inválida.');
+      }
+      const { data, error } = await sb().from('propiedades').update(payload).eq('id', id).select().single();
+      check(error);
+      return data;
     },
 
     // Prospectos que declararon interés en esta propiedad.
@@ -401,8 +453,10 @@
     // Reporte de vendidas en un periodo. Devuelve filas + totales por asesor y global.
     async reporte(opts) {
       opts = opts || {};
+      // Los % de comisión viven en propiedad_comisiones (RLS: el asesor solo ve
+      // los de sus propiedades; el admin, todos). Se embeben en la consulta.
       let q = sb().from('propiedades')
-        .select('*, captador:asesor_captador_id(nombre), vendedor:asesor_vendedor_id(nombre)')
+        .select('*, captador:asesor_captador_id(nombre), vendedor:asesor_vendedor_id(nombre), comision:propiedad_comisiones(comision_pct,comision_captador_pct,comision_vendedor_pct)')
         .eq('estatus', 'vendida');
       if (opts.desde) q = q.gte('fecha_venta', opts.desde);
       if (opts.hasta) q = q.lte('fecha_venta', opts.hasta);
@@ -411,11 +465,12 @@
       check(error);
 
       const rows = (data || []).map(p => {
+        const com = Array.isArray(p.comision) ? p.comision[0] : p.comision; // 1:1 embed
         const base = Number(p.precio_venta_final || p.precio || 0);
-        const pctCap = num(p.comision_captador_pct);
-        const pctVen = num(p.comision_vendedor_pct);
+        const pctCap = num(com && com.comision_captador_pct);
+        const pctVen = num(com && com.comision_vendedor_pct);
         // Si no hay split, usar comision_pct como total y repartir 50/50 informativo.
-        const totalPct = num(p.comision_pct);
+        const totalPct = num(com && com.comision_pct);
         const comCap = pctCap != null ? base * pctCap / 100 : (totalPct != null ? base * totalPct / 200 : 0);
         const comVen = pctVen != null ? base * pctVen / 100 : (totalPct != null ? base * totalPct / 200 : 0);
         return {

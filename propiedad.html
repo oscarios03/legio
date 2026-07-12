@@ -38,7 +38,7 @@
         <a href="index.html#contacto">Contacto</a>
       </nav>
       <a href="estimador.html" class="btn btn--gold nav__cta">Valúa tu Propiedad</a>
-      <button class="nav__burger" id="burger" aria-label="Menú">
+      <button class="nav__burger" id="burger" aria-label="Menú" aria-controls="mobileMenu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -64,7 +64,7 @@
   </main>
 
   <!-- Lightbox de fotos (se controla por JS) -->
-  <div class="pd-lightbox" id="lightbox" hidden>
+  <div class="pd-lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Galería de fotos de la propiedad">
     <button class="pd-lightbox__close" id="lbClose" aria-label="Cerrar">×</button>
     <button class="pd-lightbox__nav pd-lightbox__nav--prev" id="lbPrev" aria-label="Anterior">‹</button>
     <img class="pd-lightbox__img" id="lbImg" src="" alt="" />

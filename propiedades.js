@@ -86,10 +86,10 @@ function propiedadCardHTML(p) {
     </a>
     <div class="property-card__body">
       <p class="property-card__price">${formatPrecioProp(p.precio, p.operacion)}</p>
-      <h3 class="property-card__title"><a href="${ficha}">${p.titulo}</a></h3>
+      <h3 class="property-card__title"><a href="${ficha}">${escAttr(p.titulo)}</a></h3>
       <p class="property-card__loc">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        ${p.colonia}, ${p.ciudad}
+        ${escAttr(p.colonia)}, ${escAttr(p.ciudad)}
       </p>
       <div class="property-card__feats">${feats.join('')}</div>
       <a class="property-card__cta" href="${ficha}">Ver propiedad →</a>
@@ -102,6 +102,7 @@ function propiedadCardHTML(p) {
 // base traen recamaras/banos/cajones/foto_principal_url y se normalizan aquí.
 
 let DATA = PROPIEDADES.slice(); // respaldo mientras carga o si no hay Supabase
+let HUBO_ERROR = false;         // distingue "sin resultados" de "falló la carga"
 
 function mapRowToCard(row) {
   return {
@@ -129,16 +130,29 @@ async function cargarPropiedades() {
   try {
     const filas = await Legio.crm.propiedades.listPublicas();
     DATA = filas.map(mapRowToCard);
+    HUBO_ERROR = false;
   } catch (e) {
     console.warn('[Legio] No se pudieron cargar propiedades de Supabase:', e.message);
     DATA = []; // evitar mostrar datos de ejemplo como si fueran reales
+    HUBO_ERROR = true;
   }
+}
+
+// Mensaje de fallo de carga (distinto del catálogo realmente vacío).
+function htmlErrorCarga() {
+  return `
+    <div class="catalog-empty">
+      <p><strong>No pudimos cargar el catálogo en este momento.</strong></p>
+      <p>Revisa tu conexión e <a href="#" onclick="location.reload();return false;">intenta de nuevo</a>,
+         o <a href="index.html#contacto">escríbenos</a> y con gusto te ayudamos.</p>
+    </div>`;
 }
 
 // ── Render: destacadas en index ──
 function renderDestacadas() {
   const grid = document.getElementById('gridDestacadas');
   if (!grid) return;
+  if (HUBO_ERROR) { grid.innerHTML = htmlErrorCarga(); return; }
   const destacadas = DATA.filter(p => p.destacada).slice(0, 6);
   const lista = destacadas.length ? destacadas : DATA.slice(0, 6);
   grid.innerHTML = lista.map(propiedadCardHTML).join('');
@@ -149,6 +163,12 @@ function renderDestacadas() {
 function aplicarFiltrosPropiedades() {
   const grid = document.getElementById('gridCatalogo');
   if (!grid) return;
+  if (HUBO_ERROR) {
+    grid.innerHTML = htmlErrorCarga();
+    const count = document.getElementById('f-count');
+    if (count) count.textContent = '';
+    return;
+  }
 
   const ciudad    = (document.getElementById('f-ciudad')    || {}).value || '';
   const tipo      = (document.getElementById('f-tipo')      || {}).value || '';

@@ -35,15 +35,20 @@
   }
 
   // ---- Lightbox ----
+  let lbFocoPrevio = null;
   function abrirLightbox(i) {
     fotoActual = i;
     $('lbImg').src = fotosUrls[i];
     $('lightbox').hidden = false;
     document.body.style.overflow = 'hidden';
+    // Foco al botón de cerrar para que el teclado quede dentro del visor.
+    lbFocoPrevio = document.activeElement;
+    $('lbClose').focus();
   }
   function cerrarLightbox() {
     $('lightbox').hidden = true;
     document.body.style.overflow = '';
+    if (lbFocoPrevio && lbFocoPrevio.focus) lbFocoPrevio.focus();
   }
   function moverLightbox(delta) {
     if (!fotosUrls.length) return;
@@ -60,6 +65,14 @@
     if (e.key === 'Escape') cerrarLightbox();
     if (e.key === 'ArrowLeft') moverLightbox(-1);
     if (e.key === 'ArrowRight') moverLightbox(1);
+    if (e.key === 'Tab') {
+      // Mantener el foco dentro del visor (cerrar / anterior / siguiente).
+      const foco = [$('lbClose'), $('lbPrev'), $('lbNext')].filter(b => b && b.offsetParent !== null);
+      if (!foco.length) return;
+      const primero = foco[0], ultimo = foco[foco.length - 1];
+      if (e.shiftKey && document.activeElement === primero) { e.preventDefault(); ultimo.focus(); }
+      else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
+    }
   });
 
   // ---- Render principal ----

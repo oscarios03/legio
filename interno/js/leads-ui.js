@@ -8,6 +8,7 @@
 
   let ASESORES = [];
   let LEADS = [];              // resultado del último query (sin filtro de texto)
+  let cargaSeq = 0;            // descarta respuestas fuera de orden (red lenta)
   const ESTADOS = ['nuevo','contactado','cita','cerrado','perdido'];
 
   // ---- Carga y filtrado ------------------------------------------------------
@@ -18,10 +19,14 @@
       asesorId: $('f-asesor').value,
     };
     Object.keys(filtros).forEach(k => { if (!filtros[k]) delete filtros[k]; });
+    const mia = ++cargaSeq;
     try {
-      LEADS = await Legio.crm.leads.list(filtros);
+      const data = await Legio.crm.leads.list(filtros);
+      if (mia !== cargaSeq) return;   // llegó una carga más reciente: ignorar esta
+      LEADS = data;
       aplicarFiltrosLocales();
     } catch (e) {
+      if (mia !== cargaSeq) return;
       $('listWrap').innerHTML = '<div class="int-card crm-msg crm-msg--err">No se pudieron cargar los leads: ' + U.esc(e.message) + '</div>';
     }
   }
@@ -166,14 +171,38 @@
   // ---- Modal de lead manual --------------------------------------------------
   const campos = ['m-nombre','m-tel','m-email','m-msg','m-ciudad'];
 
-  $('btnNuevo').addEventListener('click', () => { $('modal').style.display = 'flex'; $('m-nombre').focus(); });
+  let modalFocoPrevio = null;
+
+  $('btnNuevo').addEventListener('click', abrirModal);
   $('mCancel').addEventListener('click', cerrarModal);
   $('modal').addEventListener('click', e => { if (e.target === $('modal')) cerrarModal(); });
+
+  function abrirModal() {
+    modalFocoPrevio = document.activeElement;
+    $('modal').style.display = 'flex';
+    $('m-nombre').focus();
+    document.addEventListener('keydown', modalKeydown);
+  }
 
   function cerrarModal() {
     $('modal').style.display = 'none';
     campos.forEach(id => $(id).value = '');
     $('m-dup').innerHTML = '';
+    document.removeEventListener('keydown', modalKeydown);
+    // Devuelve el foco al botón que abrió el modal (o a donde estaba).
+    if (modalFocoPrevio && modalFocoPrevio.focus) modalFocoPrevio.focus();
+  }
+
+  // Escape cierra; Tab queda atrapado dentro del modal (accesibilidad).
+  function modalKeydown(e) {
+    if (e.key === 'Escape') { cerrarModal(); return; }
+    if (e.key !== 'Tab') return;
+    const foco = [...$('modal').querySelectorAll('input, select, textarea, button, a[href]')]
+      .filter(el => !el.disabled && el.offsetParent !== null);
+    if (!foco.length) return;
+    const primero = foco[0], ultimo = foco[foco.length - 1];
+    if (e.shiftKey && document.activeElement === primero) { e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
   }
 
   // Avisa de duplicados mientras el usuario teclea el contacto.

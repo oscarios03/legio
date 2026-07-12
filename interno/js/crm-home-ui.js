@@ -21,12 +21,22 @@
     $('userLabel').textContent = nombre ? (nombre + (admin ? ' · admin' : '')) : '';
     $('welcome').textContent = nombre ? ('Hola, ' + nombre.split(' ')[0] + '.') : '';
 
-    ['cardComisiones','cardAsesores','cardMetricas'].forEach(id => {
-      $(id).style.display = admin ? '' : 'none';
+    ['cardComisiones','cardAsesores','cardMetricas','cardRevision'].forEach(id => {
+      const el = $(id); if (el) el.style.display = admin ? '' : 'none';
     });
 
+    if (admin) contarRevision();
     cargarPendientes(asesor, admin);
     conectarBuscador();
+  }
+
+  // Contador de propiedades esperando revisión (badge en la tarjeta de admin).
+  async function contarRevision() {
+    try {
+      const pend = await Legio.crm.propiedades.pendientesRevision();
+      const badge = $('revCount');
+      if (badge) badge.textContent = pend.length ? (pend.length + ' pendiente' + (pend.length === 1 ? '' : 's')) : 'Admin';
+    } catch (e) { /* el badge se queda como "Admin": no es crítico */ }
   }
 
   // ---- Pendientes del día ----------------------------------------------------
@@ -105,12 +115,15 @@
     return _props;
   }
 
+  let buscarSeq = 0;
   async function buscar(texto, caja) {
+    const mia = ++buscarSeq;
     try {
       const [leads, props] = await Promise.all([
         Legio.crm.leads.buscar(texto),
         propiedadesCache(),
       ]);
+      if (mia !== buscarSeq) return;   // resultado viejo: llegó una búsqueda más nueva
       const t = texto.toLowerCase();
       const propsFiltradas = props.filter(p =>
         (p.titulo || '').toLowerCase().includes(t) || (p.colonia || '').toLowerCase().includes(t)
@@ -135,6 +148,7 @@
           </a>`).join('') : '');
       caja.hidden = false;
     } catch (e) {
+      if (mia !== buscarSeq) return;
       caja.innerHTML = '<div class="buscador__vacio">No se pudo buscar.</div>';
       caja.hidden = false;
     }

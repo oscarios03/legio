@@ -1,7 +1,5 @@
 /* ===== ASISTENTE DE CAPTURA DE AVALÚO ===== */
 (function () {
-  if (!Legio.auth.requireAuth('index.html')) return;
-
   const $  = id => document.getElementById(id);
   const $$ = sel => [...document.querySelectorAll(sel)];
   const V  = Legio.valuacion;
@@ -277,7 +275,10 @@
     renderFotos();
   }
 
-  // Init
-  actualizarCamposPorTipo();
-  if (editId) cargarEdicion();
+  // Init — exige sesión del CRM (Supabase); si no hay, va al login.
+  (async function init() {
+    if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    actualizarCamposPorTipo();
+    if (editId) cargarEdicion();
+  })();
 })();

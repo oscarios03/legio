@@ -31,6 +31,7 @@
     <div class="int-head"><h1 id="titulo">Nueva propiedad</h1></div>
 
     <div id="msg"></div>
+    <div id="revBanner"></div>
 
     <form id="propForm" class="int-card" novalidate>
 
@@ -161,8 +162,11 @@
           <select id="p-vendedor"><option value="">—</option></select>
         </div>
       </div>
-      <div class="switch-row"><input type="checkbox" id="p-publica" /> <label for="p-publica">Mostrar en el sitio público</label></div>
-      <div class="switch-row"><input type="checkbox" id="p-destacada" /> <label for="p-destacada">Destacada (aparece en la portada)</label></div>
+      <div id="publicacionBox">
+        <div class="switch-row"><input type="checkbox" id="p-publica" /> <label for="p-publica">Mostrar en el sitio público</label></div>
+        <div class="switch-row"><input type="checkbox" id="p-destacada" /> <label for="p-destacada">Destacada (aparece en la portada)</label></div>
+      </div>
+      <p class="form-hint" id="revAviso" style="display:none;">📋 Al guardar, esta propiedad pasa a <strong>revisión de un administrador</strong> antes de publicarse en el sitio.</p>
 
       <!-- Solo admin -->
       <div id="ventaBox">

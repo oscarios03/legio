@@ -233,10 +233,11 @@ create trigger trg_lead_actividad_alta after insert on public.leads
 
 
 -- ============================================================================
--- 7. PROTECCIÓN DE COMISIONES A NIVEL DE BASE
---    Hasta ahora los campos de comisión solo se ocultaban en la interfaz: un
---    asesor con la consola del navegador podía escribirlos. Este trigger los
---    congela para todo el que no sea admin.
+-- 7. PROTECCIÓN DE DATOS DE VENTA A NIVEL DE BASE
+--    Los porcentajes de comisión se mudaron a la tabla propiedad_comisiones
+--    (ver sección 11); su acceso lo controla la RLS de esa tabla. Aquí solo se
+--    congelan, para todo el que no sea admin, el precio de venta final y la
+--    fecha de venta (que siguen viviendo en `propiedades`).
 -- ============================================================================
 alter table public.propiedades alter column created_by set default auth.uid();
 
@@ -246,15 +247,9 @@ create or replace function public.propiedad_protege_comision() returns trigger
     if public.is_admin() then return new; end if;
 
     if tg_op = 'INSERT' then
-      new.comision_pct          := null;
-      new.comision_captador_pct := null;
-      new.comision_vendedor_pct := null;
       new.precio_venta_final    := null;
       new.fecha_venta           := null;
     else
-      new.comision_pct          := old.comision_pct;
-      new.comision_captador_pct := old.comision_captador_pct;
-      new.comision_vendedor_pct := old.comision_vendedor_pct;
       new.precio_venta_final    := old.precio_venta_final;
       new.fecha_venta           := old.fecha_venta;
     end if;
@@ -387,6 +382,144 @@ create policy av_auth_del on public.avaluos for delete to authenticated
 -- drop trigger if exists trg_lead_notificar on public.leads;
 -- create trigger trg_lead_notificar after insert on public.leads
 --   for each row execute function public.lead_notificar();
+
+
+-- ============================================================================
+-- 10. ANTI-ESCALADA DE ROL
+--     La política ase_self_upd deja que un asesor actualice su propia fila. Para
+--     que NO pueda auto-promoverse a admin (ni reactivarse) llamando la API
+--     directamente, este trigger congela `rol` y `activo` para todo el que no
+--     sea admin, sin depender de la subconsulta de la política.
+-- ============================================================================
+create or replace function public.asesor_congela_privilegios() returns trigger
+  language plpgsql security definer set search_path = public as $$
+  begin
+    if public.is_admin() then return new; end if;
+    new.rol    := old.rol;
+    new.activo := old.activo;
+    return new;
+  end
+$$;
+
+drop trigger if exists trg_asesor_congela on public.asesores;
+create trigger trg_asesor_congela before update on public.asesores
+  for each row execute function public.asesor_congela_privilegios();
+
+
+-- ============================================================================
+-- 11. COMISIONES EN TABLA APARTE (cada asesor ve solo las suyas)
+--     Antes los % de comisión vivían en `propiedades` y cualquier asesor los
+--     leía con select('*'). Se mudan a una tabla con RLS por fila: el asesor
+--     solo ve las comisiones de propiedades donde es captador o vendedor; el
+--     admin ve todas. La escritura es solo del admin.
+-- ============================================================================
+create table if not exists public.propiedad_comisiones (
+  propiedad_id          uuid primary key references public.propiedades(id) on delete cascade,
+  comision_pct          numeric,
+  comision_captador_pct numeric,
+  comision_vendedor_pct numeric,
+  updated_at            timestamptz not null default now()
+);
+
+-- Migrar los datos existentes (si las columnas viejas aún existen en propiedades).
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'propiedades' and column_name = 'comision_pct'
+  ) then
+    insert into public.propiedad_comisiones (propiedad_id, comision_pct, comision_captador_pct, comision_vendedor_pct)
+    select id, comision_pct, comision_captador_pct, comision_vendedor_pct
+      from public.propiedades
+     where comision_pct is not null
+        or comision_captador_pct is not null
+        or comision_vendedor_pct is not null
+    on conflict (propiedad_id) do nothing;
+  end if;
+end $$;
+
+-- Ya migradas: quitar las columnas de `propiedades` para que select('*') no las exponga.
+alter table public.propiedades drop column if exists comision_pct;
+alter table public.propiedades drop column if exists comision_captador_pct;
+alter table public.propiedades drop column if exists comision_vendedor_pct;
+
+drop trigger if exists trg_pcom_touch on public.propiedad_comisiones;
+create trigger trg_pcom_touch before update on public.propiedad_comisiones
+  for each row execute function public.touch_updated_at();
+
+alter table public.propiedad_comisiones enable row level security;
+
+drop policy if exists pcom_sel      on public.propiedad_comisiones;
+drop policy if exists pcom_admin_wr on public.propiedad_comisiones;
+
+-- Lee: admin, o el captador/vendedor de esa propiedad.
+create policy pcom_sel on public.propiedad_comisiones
+  for select to authenticated
+  using (
+    public.is_admin()
+    or exists (
+      select 1 from public.propiedades p
+       where p.id = propiedad_id
+         and (p.asesor_captador_id = auth.uid() or p.asesor_vendedor_id = auth.uid())
+    )
+  );
+-- Escribe: solo admin.
+create policy pcom_admin_wr on public.propiedad_comisiones
+  for all to authenticated
+  using (public.is_admin()) with check (public.is_admin());
+
+
+-- ============================================================================
+-- 12. MODERACIÓN DE PROPIEDADES (revisión del admin antes de publicar)
+--     Toda alta o edición de un asesor entra en 'pendiente' y NO se publica.
+--     Un admin la aprueba (publica), la devuelve (con observaciones) o la
+--     desecha (se conserva el registro). El admin publica/edita sin fricción.
+-- ============================================================================
+alter table public.propiedades add column if not exists revision_estado       text;
+alter table public.propiedades add column if not exists revision_observaciones text;
+alter table public.propiedades add column if not exists revision_por          uuid references public.asesores(id);
+alter table public.propiedades add column if not exists revision_at           timestamptz;
+
+-- Grandfather: lo que ya existía se considera aprobado (no tumbar lo publicado).
+update public.propiedades set revision_estado = 'aprobada' where revision_estado is null;
+
+alter table public.propiedades alter column revision_estado set default 'pendiente';
+alter table public.propiedades alter column revision_estado set not null;
+
+alter table public.propiedades drop constraint if exists propiedades_revision_estado_check;
+alter table public.propiedades add constraint propiedades_revision_estado_check
+  check (revision_estado in ('pendiente','aprobada','devuelta','desechada'));
+
+create index if not exists idx_prop_revision on public.propiedades(revision_estado)
+  where revision_estado = 'pendiente';
+
+-- Trigger de moderación: el asesor nunca publica ni aprueba; el admin manda.
+create or replace function public.propiedad_moderacion() returns trigger
+  language plpgsql security definer set search_path = public as $$
+  begin
+    if public.is_admin() then
+      return new;   -- admin publica/aprueba/devuelve/desecha libremente
+    end if;
+    -- Asesor: toda alta o edición vuelve a revisión y sale del sitio.
+    new.publica                := false;
+    new.destacada              := false;
+    new.revision_estado        := 'pendiente';
+    new.revision_observaciones := null;
+    new.revision_por           := null;
+    new.revision_at            := null;
+    return new;
+  end
+$$;
+
+drop trigger if exists trg_prop_moderacion on public.propiedades;
+create trigger trg_prop_moderacion before insert or update on public.propiedades
+  for each row execute function public.propiedad_moderacion();
+
+-- El público solo ve lo aprobado (defensa en profundidad; el trigger ya lo impide).
+drop policy if exists prop_public_sel on public.propiedades;
+create policy prop_public_sel on public.propiedades
+  for select to anon
+  using (publica = true and estatus = 'disponible' and revision_estado = 'aprobada');
 
 
 -- ============================================================================
