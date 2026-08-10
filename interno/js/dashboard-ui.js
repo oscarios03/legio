@@ -12,14 +12,14 @@
     catch (e) { return iso; }
   }
 
-  function mostrarPantalla() {
+  async function mostrarPantalla() {
     const authed = Legio.auth.isAuthed();
     $('loginCard').style.display = authed ? 'none' : '';
-    $('topBar').style.display = authed ? '' : 'none';
-    $('dashboard').style.display = authed ? '' : 'none';
-    // Sin control de acceso no tiene sentido mostrar "Cerrar sesión".
-    if (!Legio.auth.enabled) $('btnLogout').style.display = 'none';
-    if (authed) { avisoModo(); render(); }
+    $('app').style.display = authed ? '' : 'none';
+    if (!authed) return;
+    await Legio.shell.montar({ page: 'avaluos' });
+    avisoModo();
+    render();
   }
 
   /* Los avalúos viven en la nube cuando hay sesión del CRM. Si no la hay, o si
@@ -39,7 +39,7 @@
     if (!pendientes) { caja.innerHTML = ''; return; }
     caja.innerHTML = `<div class="crm-msg crm-msg--warn">
       Hay <strong>${pendientes}</strong> avalúo(s) guardados solo en este navegador.
-      <button class="btn btn--gold btn--sm" id="btnSubir" style="margin-left:8px;">Subirlos a la nube</button>
+      <button class="btn btn--primary btn--sm" id="btnSubir" style="margin-left:8px;">Subirlos a la nube</button>
     </div>`;
     $('btnSubir').addEventListener('click', async () => {
       $('btnSubir').disabled = true;
@@ -56,31 +56,41 @@
     let items;
     try { items = await Legio.storage.list(); }
     catch (e) {
-      wrap.innerHTML = '<div class="int-card crm-msg crm-msg--err">No se pudieron cargar los avalúos: ' + e.message + '</div>';
+      wrap.innerHTML = '<div class="card crm-msg crm-msg--err">No se pudieron cargar los avalúos: ' + e.message + '</div>';
       return;
     }
     items.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+    const cuenta = document.getElementById('count');
+    if (cuenta) cuenta.textContent = items.length === 1 ? '1 avalúo' : items.length + ' avalúos';
     if (!items.length) {
-      wrap.innerHTML = '<div class="int-card int-empty">Aún no hay avalúos. Crea el primero con <strong>+ Nuevo avalúo</strong>.</div>';
+      wrap.innerHTML = '<div class="card int-empty">Aún no hay avalúos. Crea el primero con <strong>+ Nuevo avalúo</strong>.</div>';
       return;
     }
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
     wrap.innerHTML =
-      '<div class="tabla-scroll"><table class="int-table"><thead><tr>' +
-      '<th>Folio</th><th>Cliente</th><th>Ciudad</th><th>Fecha</th><th>Valor concluido</th><th></th>' +
+      '<div class="card card--pad0"><div class="tabla-scroll"><table class="int-table"><thead><tr>' +
+      '<th>Cliente</th><th>Folio</th><th>Ciudad</th><th>Fecha</th><th>Valor concluido</th><th>Estado</th><th></th>' +
       '</tr></thead><tbody>' +
       items.map(a => `<tr>
-        <td>${a.folio || '—'}</td>
-        <td>${a.cliente || '—'}</td>
-        <td>${a.ciudad || '—'}</td>
-        <td>${fmtFecha(a.fecha)}</td>
-        <td>${fmtMXN(a.concluido)}</td>
+        <td><span class="celda-id">
+          <span class="avatar avatar--gris">${esc((a.cliente || '?')[0])}</span>
+          <span class="celda-id__txt"><b>${esc(a.cliente || 'Sin cliente')}</b>
+            <span>${esc(a.ciudad || '—')}</span></span>
+        </span></td>
+        <td class="td-sub">${esc(a.folio || '—')}</td>
+        <td class="td-sub">${esc(a.ciudad || '—')}</td>
+        <td class="td-sub" style="white-space:nowrap;">${fmtFecha(a.fecha)}</td>
+        <td class="td-num"><strong>${fmtMXN(a.concluido)}</strong></td>
+        <td>${a.concluido
+              ? '<span class="status-badge status-badge--disponible">Concluido</span>'
+              : '<span class="status-badge status-badge--borrador">En proceso</span>'}</td>
         <td><div class="int-table__actions">
           <a class="btn btn--ghost btn--sm" href="avaluo.html?id=${a.id}">Editar</a>
-          <a class="btn btn--gold btn--sm" href="informe.html?id=${a.id}" target="_blank" rel="noopener">Informe</a>
+          <a class="btn btn--primary btn--sm" href="informe.html?id=${a.id}" target="_blank" rel="noopener">Informe</a>
           <button class="btn btn--danger btn--sm" data-del="${a.id}">Eliminar</button>
         </div></td>
       </tr>`).join('') +
-      '</tbody></table></div>';
+      '</tbody></table></div></div>';
 
     wrap.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -99,8 +109,6 @@
     if (ok) { $('pwd').value = ''; mostrarPantalla(); }
     else $('loginError').textContent = 'Contraseña incorrecta.';
   });
-
-  $('btnLogout').addEventListener('click', () => { Legio.auth.logout(); mostrarPantalla(); });
 
   // ── Exportar / Importar ──
   $('btnExport').addEventListener('click', async () => {

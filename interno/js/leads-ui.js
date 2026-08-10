@@ -5,6 +5,7 @@
 (function () {
   const $ = id => document.getElementById(id);
   const U = Legio.util;
+  const ico = Legio.ico.svg;
 
   let ASESORES = [];
   let LEADS = [];              // resultado del último query (sin filtro de texto)
@@ -60,12 +61,12 @@
 
   // Celda de seguimiento: lo que le dice al asesor si este lead está urgido.
   function celdaSeguimiento(l) {
-    if (['cerrado','perdido'].includes(l.estatus)) return '<span style="color:var(--gray);">—</span>';
+    if (['cerrado','perdido'].includes(l.estatus)) return '<span class="td-sub">—</span>';
     const hoy = U.hoyISO();
     if (!l.proximo_seguimiento) {
       return !l.ultimo_contacto_at
         ? '<span class="pill pill--urgente">Sin contactar</span>'
-        : '<span style="color:var(--gray);">Sin agendar</span>';
+        : '<span class="td-sub">Sin agendar</span>';
     }
     if (l.proximo_seguimiento < hoy)  return `<span class="pill pill--urgente">Vencido · ${U.fmtFecha(l.proximo_seguimiento)}</span>`;
     if (l.proximo_seguimiento === hoy) return '<span class="pill pill--hoy">Hoy</span>';
@@ -74,10 +75,10 @@
 
   function acciones(l) {
     const wa = l.telefono
-      ? `<a class="btn btn--gold btn--sm" href="${U.waLink(l.telefono, U.plantillaWA(l))}" target="_blank" rel="noopener" data-wa="${l.id}" title="WhatsApp">💬</a>`
+      ? `<a class="btn btn--wa btn--sm" href="${U.waLink(l.telefono, U.plantillaWA(l))}" target="_blank" rel="noopener" data-wa="${l.id}" title="WhatsApp">${ico('chat')}</a>`
       : '';
     const tel = l.telefono
-      ? `<a class="btn btn--ghost btn--sm" href="${U.telLink(l.telefono)}" title="Llamar">📞</a>`
+      ? `<a class="btn btn--ghost btn--sm" href="${U.telLink(l.telefono)}" title="Llamar">${ico('telefono')}</a>`
       : '';
     return `<div class="int-table__actions">
       ${wa}${tel}
@@ -85,23 +86,38 @@
     </div>`;
   }
 
+  // Color estable por nombre: la lista se distingue de un vistazo.
+  const TONOS = ['', 'avatar--gold', 'avatar--ok', 'avatar--plum'];
+  function tono(l) {
+    const s = String(l.nombre || l.id || '');
+    let h = 0;
+    for (let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i)) % TONOS.length;
+    return TONOS[h];
+  }
+
+  const DOT = { nuevo: 'dot--bad', contactado: 'dot--info', cita: 'dot--warn', cerrado: 'dot--ok', perdido: '' };
+
   function render(leads) {
     $('count').textContent = leads.length === 1 ? '1 prospecto' : leads.length + ' prospectos';
     const wrap = $('listWrap');
     if (!leads.length) {
-      wrap.innerHTML = '<div class="int-card int-empty">No hay prospectos con esos filtros.</div>';
+      wrap.innerHTML = '<div class="card int-empty">No hay prospectos con esos filtros.</div>';
       return;
     }
     wrap.innerHTML =
-      '<div class="tabla-scroll"><table class="int-table"><thead><tr>' +
-      '<th>Fecha</th><th>Nombre</th><th>Contacto</th><th>Origen</th><th>Seguimiento</th><th>Asesor</th><th>Estatus</th><th></th>' +
+      '<div class="card card--pad0"><div class="tabla-scroll"><table class="int-table int-table--acciones"><thead><tr>' +
+      '<th>Prospecto</th><th>Contacto</th><th>Origen</th><th>Seguimiento</th><th>Asesor</th><th>Estatus</th><th></th>' +
       '</tr></thead><tbody>' +
       leads.map(l => `<tr>
-        <td style="white-space:nowrap;">${U.fmtFecha(l.created_at)}</td>
         <td>
-          <a href="lead.html?id=${l.id}"><strong>${U.esc(l.nombre || 'Sin nombre')}</strong></a>
-          ${l.ciudad ? '<br><span class="td-sub">' + U.esc(l.ciudad) + '</span>' : ''}
-          ${l.propiedad ? '<br><span class="td-sub">🏠 ' + U.esc(l.propiedad.titulo) + '</span>' : ''}
+          <a class="celda-id" href="lead.html?id=${l.id}">
+            <span class="avatar ${tono(l)}">${U.esc((l.nombre || '?')[0])}</span>
+            <span class="celda-id__txt">
+              <b>${U.esc(l.nombre || 'Sin nombre')}</b>
+              <span><i class="dot ${DOT[l.estatus] || ''}"></i>${l.ciudad ? U.esc(l.ciudad) + ' · ' : ''}${U.esc(U.haceCuanto(l.created_at))}</span>
+            </span>
+          </a>
+          ${l.propiedad ? '<span class="td-sub">Interés: ' + U.esc(l.propiedad.titulo) + '</span>' : ''}
         </td>
         <td>${l.telefono ? U.esc(l.telefono) : ''}${l.telefono && l.email ? '<br>' : ''}${l.email ? '<span class="td-sub">' + U.esc(l.email) + '</span>' : ''}</td>
         <td><span class="badge-origen">${U.etOrigen(l.origen)}</span></td>
@@ -110,7 +126,7 @@
         <td>${selectEstatus(l)}</td>
         <td>${acciones(l)}</td>
       </tr>`).join('') +
-      '</tbody></table></div>';
+      '</tbody></table></div></div>';
 
     wrap.querySelectorAll('[data-asignar]').forEach(sel => sel.addEventListener('change', async () => {
       try {
@@ -216,16 +232,18 @@
   });
 
   $('btnCSV').addEventListener('click', exportar);
-  $('btnLogout').addEventListener('click', async () => { await Legio.crmAuth.logout(); location.replace('index.html'); });
 
   // ---- Init ------------------------------------------------------------------
   async function init() {
     if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    await Legio.shell.montar({ page: 'leads' });
 
     // Permite entrar ya filtrado desde el panel: leads.html?urgencia=vencidos
     const params = new URLSearchParams(location.search);
     if (params.get('urgencia')) $('f-urgencia').value = params.get('urgencia');
     if (params.get('estatus'))  $('f-estatus').value  = params.get('estatus');
+    if (params.get('origen'))   $('f-origen').value   = params.get('origen');
+    if (params.get('nuevo'))    $('btnNuevo').click();
 
     try {
       ASESORES = await Legio.crm.asesores.list();

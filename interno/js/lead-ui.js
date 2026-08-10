@@ -19,6 +19,7 @@
   function pintarEncabezado() {
     $('l-origen').textContent = U.etOrigen(LEAD.origen);
     $('l-nombre').textContent = LEAD.nombre || 'Prospecto sin nombre';
+    $('l-avatar').textContent = (LEAD.nombre || '?')[0];
 
     const partes = [];
     partes.push('Registrado ' + U.haceCuanto(LEAD.created_at));
@@ -67,7 +68,7 @@
     }
     $('timeline').innerHTML = '<ul class="tl">' + actividades.map(a => `
       <li class="tl__item tl__item--${a.tipo}">
-        <span class="tl__icono">${U.ICONO_ACTIVIDAD[a.tipo] || '•'}</span>
+        <span class="tl__icono">${Legio.ico.actividad(a.tipo)}</span>
         <div class="tl__cuerpo">
           <div class="tl__head">
             <strong>${U.esc(U.etActividad(a.tipo))}</strong>
@@ -244,7 +245,6 @@
     $('btnWA').addEventListener('click', () => registrarActividad('whatsapp', 'Le escribí por WhatsApp.'));
     $('btnTel').addEventListener('click', () => registrarActividad('llamada', 'Le marqué por teléfono.'));
 
-    $('btnLogout').addEventListener('click', async () => { await Legio.crmAuth.logout(); location.replace('index.html'); });
   }
 
   async function cargarMatch() {
@@ -255,6 +255,7 @@
   // ---- Init ------------------------------------------------------------------
   async function init() {
     if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    await Legio.shell.montar({ page: 'leads' });
     if (!leadId) { location.replace('leads.html'); return; }
 
     $('l-motivo').innerHTML = '<option value="">Selecciona un motivo…</option>' +

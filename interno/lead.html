@@ -12,37 +12,40 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="leads">
 
-  <header class="int-top">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Prospecto</span>
-      </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="leads.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Prospectos</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
-      </div>
-    </div>
-  </header>
+  <div class="app" id="app">
+    <div class="main">
 
-  <main class="int-wrap">
-    <div id="msg"></div>
-    <div id="cargando" class="int-card int-empty">Cargando…</div>
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="prospectos"></span>
+          <h1>Ficha del prospecto</h1>
+        </div>
+        <div class="topbar__actions">
+          <a class="btn btn--ghost btn--sm" href="leads.html">Volver a prospectos</a>
+        </div>
+      </header>
+
+      <div class="page">
+        <div id="msg"></div>
+    <div id="cargando" class="card int-empty">Cargando…</div>
 
     <div id="ficha" style="display:none;">
 
       <!-- Encabezado con acciones rápidas -->
-      <div class="lead-hero int-card">
+      <div class="lead-hero card">
         <div class="lead-hero__main">
-          <span class="badge-origen" id="l-origen">—</span>
-          <h1 id="l-nombre">—</h1>
-          <p class="lead-hero__meta" id="l-meta"></p>
+          <span class="avatar" id="l-avatar"></span>
+          <div>
+            <span class="badge-origen" id="l-origen">—</span>
+            <h1 id="l-nombre">—</h1>
+            <p class="lead-hero__meta" id="l-meta"></p>
+          </div>
         </div>
         <div class="lead-hero__acciones">
-          <a class="btn btn--gold btn--sm" id="btnWA" target="_blank" rel="noopener">💬 WhatsApp</a>
-          <a class="btn btn--ghost btn--sm" id="btnTel">📞 Llamar</a>
+          <a class="btn btn--wa btn--sm" id="btnWA" target="_blank" rel="noopener"><span data-ico="chat"></span> WhatsApp</a>
+          <a class="btn btn--ghost btn--sm" id="btnTel"><span data-ico="telefono"></span> Llamar</a>
           <button class="btn btn--ghost btn--sm" id="btnCopiar">Copiar teléfono</button>
         </div>
       </div>
@@ -54,8 +57,8 @@
 
         <!-- Columna izquierda: seguimiento -->
         <div>
-          <div class="int-card">
-            <h3 class="int-card__title">Seguimiento</h3>
+          <div class="card">
+            <h3 class="card__title">Seguimiento</h3>
             <div class="int-grid-2">
               <div class="form-group">
                 <label for="l-estatus">Estatus</label>
@@ -92,35 +95,35 @@
           </div>
 
           <!-- Registrar actividad -->
-          <div class="int-card">
-            <h3 class="int-card__title">Registrar contacto</h3>
-            <p class="int-card__desc">Queda en la bitácora con tu nombre y la fecha.</p>
+          <div class="card">
+            <h3 class="card__title">Registrar contacto</h3>
+            <p class="card__desc">Queda en la bitácora con tu nombre y la fecha.</p>
             <div class="lead-tipos" id="actTipos">
-              <button type="button" class="lead-tipo is-active" data-tipo="llamada">📞 Llamada</button>
-              <button type="button" class="lead-tipo" data-tipo="whatsapp">💬 WhatsApp</button>
-              <button type="button" class="lead-tipo" data-tipo="email">✉️ Correo</button>
-              <button type="button" class="lead-tipo" data-tipo="cita">📅 Cita</button>
-              <button type="button" class="lead-tipo" data-tipo="visita">🏠 Visita</button>
-              <button type="button" class="lead-tipo" data-tipo="nota">📝 Nota</button>
+              <button type="button" class="lead-tipo is-active" data-tipo="llamada"><span data-ico="telefono"></span> Llamada</button>
+              <button type="button" class="lead-tipo" data-tipo="whatsapp"><span data-ico="chat"></span> WhatsApp</button>
+              <button type="button" class="lead-tipo" data-tipo="email"><span data-ico="correo"></span> Correo</button>
+              <button type="button" class="lead-tipo" data-tipo="cita"><span data-ico="calendario"></span> Cita</button>
+              <button type="button" class="lead-tipo" data-tipo="visita"><span data-ico="casa"></span> Visita</button>
+              <button type="button" class="lead-tipo" data-tipo="nota"><span data-ico="nota"></span> Nota</button>
             </div>
             <div class="form-group">
               <label for="act-comentario">¿Qué pasó?</label>
               <textarea id="act-comentario" rows="2" placeholder="Ej: No contestó, le mandé mensaje. Vuelvo a marcar el viernes."></textarea>
             </div>
-            <button class="btn btn--gold btn--sm" id="btnActividad">Guardar en la bitácora</button>
+            <button class="btn btn--primary btn--sm" id="btnActividad">Guardar en la bitácora</button>
           </div>
 
           <!-- Bitácora -->
-          <div class="int-card">
-            <h3 class="int-card__title">Bitácora</h3>
+          <div class="card">
+            <h3 class="card__title">Bitácora</h3>
             <div id="timeline"><p class="int-empty" style="padding:24px 0;">Sin actividad registrada.</p></div>
           </div>
         </div>
 
         <!-- Columna derecha: datos y match -->
         <aside>
-          <div class="int-card">
-            <h3 class="int-card__title">Datos del prospecto</h3>
+          <div class="card">
+            <h3 class="card__title">Datos del prospecto</h3>
             <div class="form-group"><label for="l-nombre-in">Nombre</label><input type="text" id="l-nombre-in" /></div>
             <div class="form-group"><label for="l-tel">Teléfono</label><input type="tel" id="l-tel" /></div>
             <div class="form-group"><label for="l-email">Correo</label><input type="email" id="l-email" /></div>
@@ -144,25 +147,29 @@
             </div>
             <div class="form-group"><label for="l-mensaje">Mensaje original</label><textarea id="l-mensaje" rows="3" readonly></textarea></div>
             <div class="form-group"><label for="l-notas">Notas internas</label><textarea id="l-notas" rows="3" placeholder="Lo que conviene recordar de este cliente."></textarea></div>
-            <button class="btn btn--gold btn--sm btn--full" id="btnGuardar">Guardar datos</button>
+            <button class="btn btn--primary btn--sm btn--full" id="btnGuardar">Guardar datos</button>
           </div>
 
-          <div class="int-card" id="matchCard" style="display:none;">
-            <h3 class="int-card__title">Propiedades que podrían interesarle</h3>
-            <p class="int-card__desc">Según ciudad, tipo y presupuesto.</p>
+          <div class="card" id="matchCard" style="display:none;">
+            <h3 class="card__title">Propiedades que podrían interesarle</h3>
+            <p class="card__desc">Según ciudad, tipo y presupuesto.</p>
             <div id="matchWrap"></div>
           </div>
         </aside>
 
       </div>
     </div>
-  </main>
+      </div>
+
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/crm-util.js"></script>
   <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/lead-ui.js"></script>
 </body>
 </html>

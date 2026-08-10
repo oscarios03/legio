@@ -552,6 +552,182 @@
     },
   };
 
+  // ---- PANEL (tablero de inicio) --------------------------------------------
+  /* Todo lo que enseña el tablero en una sola llamada: cifras del periodo contra
+   * el periodo anterior, agenda, cierres, actividad del equipo e inventario.
+   * Se agrega en memoria por lo mismo que las métricas: el volumen de una
+   * oficina cabe de sobra y evita mantener vistas SQL.
+   *
+   *   opts: { desde, hasta, asesorId }   asesorId nulo = toda la oficina (admin)
+   */
+  const CAMPOS_PANEL = 'id, nombre, telefono, email, origen, estatus, ciudad, created_at, ' +
+                       'ultimo_contacto_at, proximo_seguimiento, asesor_id, asesor:asesor_id(nombre)';
+
+  const panel = {
+    async resumen(opts) {
+      opts = opts || {};
+      const desde = opts.desde, hasta = opts.hasta;
+      const asesorId = opts.asesorId || null;
+
+      // Periodo anterior del mismo largo, para las comparativas.
+      const largo = diasEntreISO(desde, hasta) + 1;
+      const prevHasta = sumarDiasISO(desde, -1);
+      const prevDesde = sumarDiasISO(prevHasta, -(largo - 1));
+
+      // El asesor ve lo suyo y lo que aún no tiene dueño (igual que en pendientes).
+      const mio = q => asesorId ? q.or(`asesor_id.eq.${asesorId},asesor_id.is.null`) : q;
+
+      const [rMes, rPrev, rAgenda, rProps, rAct] = await Promise.all([
+        mio(sb().from('leads').select(CAMPOS_PANEL))
+          .gte('created_at', desde).lte('created_at', hasta + 'T23:59:59')
+          .order('created_at', { ascending: false }),
+        mio(sb().from('leads').select('id, estatus, created_at, ultimo_contacto_at'))
+          .gte('created_at', prevDesde).lte('created_at', prevHasta + 'T23:59:59'),
+        mio(sb().from('leads').select(CAMPOS_PANEL))
+          .not('estatus', 'in', '(cerrado,perdido)')
+          .not('proximo_seguimiento', 'is', null)
+          .gte('proximo_seguimiento', opts.agendaDesde || desde)
+          .lte('proximo_seguimiento', opts.agendaHasta || hasta)
+          .order('proximo_seguimiento', { ascending: true }),
+        sb().from('propiedades').select('id, titulo, ciudad, estatus, precio, precio_venta_final, publica, ' +
+          'comision_pct, comision_captador_pct, comision_vendedor_pct, created_at, fecha_venta, ' +
+          'foto_principal_url, asesor_captador_id, asesor_vendedor_id, vendedor:asesor_vendedor_id(nombre)'),
+        sb().from('lead_actividades').select('id, tipo, created_at')
+          .gte('created_at', desde).lte('created_at', hasta + 'T23:59:59'),
+      ]);
+      check(rMes.error); check(rPrev.error); check(rAgenda.error); check(rProps.error);
+      // La bitácora es secundaria: si falla, el tablero se dibuja igual.
+      const actos = rAct.error ? [] : (rAct.data || []);
+
+      const leads     = rMes.data || [];
+      const leadsPrev = rPrev.data || [];
+      const agenda    = rAgenda.data || [];
+      const props     = rProps.data || [];
+
+      // --- Cierres del periodo (lo que de verdad se firmó) ---
+      // Con la vista acotada a un asesor, los cierres son los suyos (captó o vendió):
+      // el monto del panel tiene que ser el que le toca, no el de toda la oficina.
+      const enRango = (f, a, b) => !!f && f >= a && f <= b;
+      const mia = p => !asesorId || p.asesor_vendedor_id === asesorId || p.asesor_captador_id === asesorId;
+      const cerrada = (p, a, b) => p.estatus === 'vendida' && enRango(p.fecha_venta, a, b) && mia(p);
+      const vendidas     = props.filter(p => cerrada(p, desde, hasta));
+      const vendidasPrev = props.filter(p => cerrada(p, prevDesde, prevHasta));
+      const monto     = vendidas.reduce((s, p) => s + Number(p.precio_venta_final || p.precio || 0), 0);
+      const montoPrev = vendidasPrev.reduce((s, p) => s + Number(p.precio_venta_final || p.precio || 0), 0);
+      const comision  = vendidas.reduce((s, p) => s + comisionDe(p, asesorId), 0);
+
+      // --- Inventario ---
+      const activas = props.filter(p => p.estatus === 'disponible' || p.estatus === 'apartada');
+      const diasAct = activas.map(p => propiedades.diasEnMercado(p)).filter(d => d != null);
+      const estancadas = activas
+        .map(p => ({ ...p, dias: propiedades.diasEnMercado(p) }))
+        .filter(p => p.dias != null && p.dias > 180)
+        .sort((a, b) => b.dias - a.dias);
+
+      // --- Conversión y respuesta ---
+      const contactados = leads.filter(l => l.ultimo_contacto_at).length;
+      const horas = l => (new Date(l.ultimo_contacto_at) - new Date(l.created_at)) / 3600000;
+      const respuesta     = promedio(leads.filter(l => l.ultimo_contacto_at).map(horas).filter(h => h >= 0));
+      const respuestaPrev = promedio(leadsPrev.filter(l => l.ultimo_contacto_at).map(horas).filter(h => h >= 0));
+
+      // --- Reparto por origen ---
+      const porOrigen = Object.entries(leads.reduce((acc, l) => {
+        acc[l.origen || 'manual'] = (acc[l.origen || 'manual'] || 0) + 1; return acc;
+      }, {})).map(([k, n]) => ({ clave: k, n })).sort((a, b) => b.n - a.n);
+
+      // --- Serie temporal: por día si el periodo es corto, por semana si es largo ---
+      const porSemana = largo > 62;
+      const serie = serieDeLeads(leads, desde, hasta, porSemana);
+
+      // --- Actividad registrada (llamadas, WhatsApp, citas…) ---
+      const eventos = actos.reduce((acc, a) => { acc[a.tipo] = (acc[a.tipo] || 0) + 1; return acc; }, {});
+
+      return {
+        rango: { desde, hasta, largo, prevDesde, prevHasta },
+        leads: {
+          total: leads.length, totalPrev: leadsPrev.length,
+          contactados, sinContactar: leads.filter(l => !l.ultimo_contacto_at && l.estatus === 'nuevo').length,
+          tasaContacto:     leads.length ? contactados / leads.length : null,
+          tasaContactoPrev: leadsPrev.length ? leadsPrev.filter(l => l.ultimo_contacto_at).length / leadsPrev.length : null,
+          ganados:     leads.filter(l => l.estatus === 'cerrado').length,
+          ganadosPrev: leadsPrev.filter(l => l.estatus === 'cerrado').length,
+          perdidos: leads.filter(l => l.estatus === 'perdido').length,
+          filas: leads,
+        },
+        respuesta: { horas: respuesta, horasPrev: respuestaPrev },
+        cierres: {
+          n: vendidas.length, nPrev: vendidasPrev.length,
+          monto, montoPrev, comision, filas: vendidas,
+        },
+        agenda: {
+          filas: agenda,
+          citas: agenda.filter(l => l.estatus === 'cita').length,
+          vencidas: agenda.filter(l => l.proximo_seguimiento < hoyISO()).length,
+        },
+        inventario: {
+          activas: activas.length,
+          disponibles: props.filter(p => p.estatus === 'disponible').length,
+          apartadas:   props.filter(p => p.estatus === 'apartada').length,
+          borradores:  props.filter(p => p.estatus === 'borrador').length,
+          publicadas:  props.filter(p => p.publica && p.estatus === 'disponible').length,
+          diasMercadoProm: promedio(diasAct),
+          estancadas,
+        },
+        porOrigen, serie, porSemana, eventos,
+        totalEventos: actos.length,
+      };
+    },
+  };
+
+  /* Comisión de una propiedad vendida. Sin `asesorId` devuelve la de la casa
+   * (captador + vendedor); con él, solo la parte que le corresponde a ese asesor.
+   * Sin split capturado se reparte el total 50/50, igual que en el reporte de
+   * comisiones, para no inventar cifras distintas en dos pantallas. */
+  function comisionDe(p, asesorId) {
+    const base = Number(p.precio_venta_final || p.precio || 0);
+    const tot = num(p.comision_pct);
+    const cap = num(p.comision_captador_pct) != null ? num(p.comision_captador_pct) : (tot != null ? tot / 2 : null);
+    const ven = num(p.comision_vendedor_pct) != null ? num(p.comision_vendedor_pct) : (tot != null ? tot / 2 : null);
+    if (cap == null && ven == null) return 0;
+
+    if (!asesorId) return base * ((cap || 0) + (ven || 0)) / 100;
+    let pct = 0;
+    if (p.asesor_captador_id === asesorId) pct += cap || 0;
+    if (p.asesor_vendedor_id === asesorId) pct += ven || 0;
+    return base * pct / 100;
+  }
+
+  /* Serie de leads por día (o por semana en periodos largos), sin huecos.
+   * La serie se corta en el día de hoy: en "este mes" los días que aún no pasan
+   * dibujarían un valle de ceros que se lee como una caída de prospectos. */
+  function serieDeLeads(leads, desde, hasta, porSemana) {
+    const fin = hasta > hoyISO() ? hoyISO() : hasta;
+    const cubetas = new Map();
+    for (let f = desde; f <= fin; f = sumarDiasISO(f, 1)) {
+      cubetas.set(porSemana ? claveSemana(new Date(f + 'T00:00:00')) : f, 0);
+    }
+    leads.forEach(l => {
+      const d = new Date(l.created_at);
+      const k = porSemana ? claveSemana(d) : isoLocal(d);
+      if (cubetas.has(k)) cubetas.set(k, cubetas.get(k) + 1);
+    });
+    return Array.from(cubetas, ([fecha, n]) => ({ fecha, n }));
+  }
+
+  // ---- Fechas (sin dependencias: crm-data.js también corre en el sitio público)
+  function isoLocal(d) {
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
+  function hoyISO() { return isoLocal(new Date()); }
+  function sumarDiasISO(iso, n) {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + n);
+    return isoLocal(d);
+  }
+  function diasEntreISO(a, b) {
+    return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+  }
+
   function promedio(arr) { return arr.length ? arr.reduce((s, n) => s + n, 0) / arr.length : null; }
 
   // Etiqueta 'YYYY-Www' del lunes de esa semana (ISO).
@@ -570,5 +746,5 @@
     return String(texto || '').replace(/[(),*]/g, ' ').trim();
   }
 
-  window.Legio.crm = { propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, metricas };
+  window.Legio.crm = { propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, metricas, panel };
 })();

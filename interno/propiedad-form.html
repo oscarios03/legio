@@ -12,27 +12,26 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="propiedades">
 
-  <header class="int-top" id="topBar">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span>
-        <span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag" id="modoTag">Nueva propiedad</span>
-      </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="crm.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Propiedades</a>
-      </div>
-    </div>
-  </header>
+  <div class="app" id="app">
+    <div class="main">
 
-  <main class="int-wrap int-wrap--narrow">
-    <div class="int-head"><h1 id="titulo">Nueva propiedad</h1></div>
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="propiedades"></span>
+          <h1 id="titulo">Nueva propiedad</h1>
+        </div>
+        <div class="topbar__actions">
+          <a class="btn btn--ghost btn--sm" href="crm.html">Volver a propiedades</a>
+        </div>
+      </header>
+
+      <div class="page page--narrow">
 
     <div id="msg"></div>
 
-    <form id="propForm" class="int-card" novalidate>
+    <form id="propForm" class="card" novalidate>
 
       <div class="form-section-title">Datos generales</div>
       <div class="form-group">
@@ -195,28 +194,31 @@
 
       <div class="int-actions">
         <a class="btn btn--ghost" href="crm.html">Cancelar</a>
-        <button type="submit" class="btn btn--gold" id="btnGuardar">Guardar propiedad</button>
+        <button type="submit" class="btn btn--primary" id="btnGuardar">Guardar propiedad</button>
       </div>
     </form>
 
     <!-- Solo en edición: compartir e interesados -->
-    <div class="int-card" id="compartirBox" style="display:none;">
-      <h3 class="int-card__title">Compartir con un cliente</h3>
-      <p class="int-card__desc">Enlace público a la ficha. Solo funciona si la propiedad está <strong>disponible</strong> y marcada como pública.</p>
+    <div class="card" id="compartirBox" style="display:none;">
+      <h3 class="card__title">Compartir con un cliente</h3>
+      <p class="card__desc">Enlace público a la ficha. Solo funciona si la propiedad está <strong>disponible</strong> y marcada como pública.</p>
       <div class="compartir">
         <input type="text" id="linkPublico" readonly />
         <button type="button" class="btn btn--ghost btn--sm" id="btnCopiarLink">Copiar</button>
-        <a class="btn btn--gold btn--sm" id="btnCompartirWA" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+        <a class="btn btn--wa btn--sm" id="btnCompartirWA" target="_blank" rel="noopener">Enviar por WhatsApp</a>
         <a class="btn btn--ghost btn--sm" id="btnVerFicha" target="_blank" rel="noopener">Ver ficha</a>
       </div>
       <p class="form-hint" id="compartirAviso"></p>
     </div>
 
-    <div class="int-card" id="interesados" style="display:none;">
-      <h3 class="int-card__title">Prospectos interesados</h3>
+    <div class="card" id="interesados" style="display:none;">
+      <h3 class="card__title">Prospectos interesados</h3>
       <div id="interesadosWrap"></div>
     </div>
-  </main>
+      </div>
+
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
@@ -225,6 +227,7 @@
   <script src="js/crm-data.js"></script>
   <script src="../colonias.js"></script>
   <script src="js/valuacion-core.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/propiedad-form-ui.js"></script>
 </body>
 </html>

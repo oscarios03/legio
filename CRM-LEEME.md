@@ -59,11 +59,26 @@ Ambos archivos son idempotentes: se pueden correr varias veces sin romper nada.
 ## Cómo se usa
 
 ### Panel (`interno/index.html`)
-- Al entrar, lo primero que ves son tus **pendientes de hoy**: prospectos sin contactar,
-  seguimientos vencidos y citas de la semana. El admin ve los de toda la oficina; el
-  asesor ve los suyos y los que están sin asignar.
-- **Buscador global** arriba: encuentra un prospecto por nombre, teléfono o correo, o una
-  propiedad por título o colonia.
+El tablero de inicio. Todo el CRM comparte una **barra lateral fija** con el buscador
+global (atajo `/`), las secciones y tu usuario; se pliega con el botón de la esquina y en
+celular se abre con el botón de menú.
+
+El panel se lee de arriba abajo, de lo urgente a lo estratégico:
+
+1. **Lo que exige atención hoy**: sin contactar, seguimiento vencido y citas de la semana,
+   cada uno con su botón para ir directo a la lista ya filtrada.
+2. **Resultados del periodo** (ocho cifras) comparadas contra el **periodo anterior del
+   mismo largo**: prospectos nuevos, tasa de contacto, cierres, monto vendido, tiempo de
+   1ª respuesta, citas por venir, inventario activo y comisión.
+3. **De dónde llegan** (panal de hexágonos por origen) y **prospectos por día**.
+4. **Próximas citas y seguimientos** + **cierres del periodo** con su monto.
+5. **Prospectos que te necesitan**: los ocho más urgentes, con WhatsApp en un clic.
+6. **Inventario que lleva demasiado en el mercado** (más de 180 días).
+
+Arriba se elige el **periodo** (este mes, últimos 30 días, mes pasado, últimos 90 días o el
+año) y, si eres admin, el **alcance**: toda la oficina o solo lo tuyo. Con el alcance en
+"solo lo mío", los cierres y la comisión son los de tus operaciones, no los de la casa.
+El botón **Exportar** baja a CSV los prospectos del periodo que estés viendo.
 
 ### Propiedades (`crm.html`)
 - Alta/edición, fotos, estatus (borrador → disponible → apartada → vendida),
@@ -177,5 +192,12 @@ el alta del lead**.
 | `supabase/functions/notificar-lead/` | Edge Function del aviso por correo. |
 | `interno/js/crm-util.js` | Formato, enlaces de WhatsApp, exportación a CSV. |
 | `interno/js/crm-data.js` | Toda la lectura/escritura contra Supabase. |
+| `interno/js/crm-shell.js` | Barra lateral, buscador global e iconos (una sola vez para todo el CRM). |
+| `interno/js/crm-charts.js` | Gráficas del panel en SVG, sin librerías externas. |
+| `interno/interno.css` | Sistema visual del CRM (colores de marca + grises del panel). |
+| `interno/index.html` | Tablero de inicio. |
 | `interno/lead.html` | Ficha del prospecto con bitácora y match de inventario. |
 | `interno/metricas.html` | Panel de métricas del admin. |
+
+> **Agregar una sección al menú:** se toca un solo lugar, la constante `MENU` de
+> `interno/js/crm-shell.js`; aparece en todas las pantallas.

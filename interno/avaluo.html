@@ -12,19 +12,22 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="avaluos">
 
-  <header class="int-top">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Nuevo avalúo</span>
-      </div>
-      <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Volver al panel</a>
-    </div>
-  </header>
+  <div class="app" id="app">
+    <div class="main">
 
-  <main class="int-wrap int-wrap--narrow">
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="avaluos"></span>
+          <h1 id="tituloAvaluo">Nuevo avalúo</h1>
+        </div>
+        <div class="topbar__actions">
+          <a class="btn btn--ghost btn--sm" href="avaluos.html">Volver a avalúos</a>
+        </div>
+      </header>
+
+      <div class="page page--narrow">
 
     <div class="int-steps" id="steps">
       <div class="int-step active" data-step="1">1 · Cliente</div>
@@ -36,21 +39,21 @@
     </div>
 
     <!-- PASO 1: Cliente -->
-    <section class="int-card" data-panel="1">
-      <h2 class="int-card__title">Datos del cliente y del asesor</h2>
-      <p class="int-card__desc">El folio y la fecha se generan automáticamente al guardar.</p>
+    <section class="card" data-panel="1">
+      <h2 class="card__title">Datos del cliente y del asesor</h2>
+      <p class="card__desc">El folio y la fecha se generan automáticamente al guardar.</p>
       <div class="int-grid-2">
         <div class="form-group"><label for="c-nombre">Cliente *</label><input type="text" id="c-nombre" placeholder="Nombre del cliente" /></div>
         <div class="form-group"><label for="c-asesor">Asesor responsable *</label><input type="text" id="c-asesor" placeholder="Tu nombre" /></div>
         <div class="form-group"><label for="c-tel">Teléfono</label><input type="tel" id="c-tel" placeholder="477 000 0000" /></div>
         <div class="form-group"><label for="c-email">Correo</label><input type="email" id="c-email" placeholder="cliente@correo.com" /></div>
       </div>
-      <div class="int-actions"><span></span><button class="btn btn--gold" data-next>Continuar →</button></div>
+      <div class="int-actions"><span></span><button class="btn btn--primary" data-next>Continuar →</button></div>
     </section>
 
     <!-- PASO 2: Propiedad -->
-    <section class="int-card" data-panel="2" hidden>
-      <h2 class="int-card__title">Datos de la propiedad</h2>
+    <section class="card" data-panel="2" hidden>
+      <h2 class="card__title">Datos de la propiedad</h2>
       <div class="int-grid-2">
         <div class="form-group">
           <label for="p-tipo">Tipo *</label>
@@ -91,13 +94,13 @@
           <label class="est-check"><input type="checkbox" class="p-extra" value="vigilancia" /> Vigilancia</label>
         </div>
       </div>
-      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--primary" data-next>Continuar →</button></div>
     </section>
 
     <!-- PASO 3: Atributos avanzados -->
-    <section class="int-card" data-panel="3" hidden>
-      <h2 class="int-card__title">Atributos avanzados</h2>
-      <p class="int-card__desc">Afinan el estimado automático según calidad y ubicación.</p>
+    <section class="card" data-panel="3" hidden>
+      <h2 class="card__title">Atributos avanzados</h2>
+      <p class="card__desc">Afinan el estimado automático según calidad y ubicación.</p>
       <div class="int-grid-2">
         <div class="form-group"><label for="a-calidad">Calidad de acabados</label><select id="a-calidad"><option value="media">Media</option><option value="lujo">Lujo</option><option value="alta">Alta</option><option value="economica">Económica</option></select></div>
         <div class="form-group"><label for="a-ubic">Ubicación en la colonia</label><select id="a-ubic"><option value="interior">Interior</option><option value="privada">Privada / cerrada</option><option value="avenida">Sobre avenida</option><option value="esquina">Esquina</option><option value="ruidosa">Zona ruidosa</option></select></div>
@@ -113,31 +116,31 @@
           <label class="est-check"><input type="checkbox" class="a-serv" value="roof_garden" /> Roof garden</label>
         </div>
       </div>
-      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--primary" data-next>Continuar →</button></div>
     </section>
 
     <!-- PASO 4: Comparables -->
-    <section class="int-card" data-panel="4" hidden>
-      <h2 class="int-card__title">Comparativa de mercado</h2>
-      <p class="int-card__desc">Captura propiedades similares en venta o vendidas. El sistema ajusta cada una respecto a tu inmueble y concilia un valor por m².</p>
+    <section class="card" data-panel="4" hidden>
+      <h2 class="card__title">Comparativa de mercado</h2>
+      <p class="card__desc">Captura propiedades similares en venta o vendidas. El sistema ajusta cada una respecto a tu inmueble y concilia un valor por m².</p>
       <div class="cmp-list" id="cmpList"></div>
       <button class="btn btn--ghost btn--sm" id="btnAddCmp" style="margin-top:14px;">+ Agregar comparable</button>
       <div class="cmp-concl" id="cmpConcl">Agrega comparables para ver la conciliación.</div>
-      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--primary" data-next>Continuar →</button></div>
     </section>
 
     <!-- PASO 5: Fotos -->
-    <section class="int-card" data-panel="5" hidden>
-      <h2 class="int-card__title">Fotos de la propiedad</h2>
-      <p class="int-card__desc">Hasta 6 fotos. Se comprimen automáticamente para el informe.</p>
+    <section class="card" data-panel="5" hidden>
+      <h2 class="card__title">Fotos de la propiedad</h2>
+      <p class="card__desc">Hasta 6 fotos. Se comprimen automáticamente para el informe.</p>
       <input type="file" id="fotoInput" accept="image/*" multiple />
       <div class="fotos-grid" id="fotosGrid"></div>
-      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--gold" data-next>Continuar →</button></div>
+      <div class="int-actions"><button class="btn btn--ghost" data-prev>← Regresar</button><button class="btn btn--primary" data-next>Continuar →</button></div>
     </section>
 
     <!-- PASO 6: Conclusión -->
-    <section class="int-card" data-panel="6" hidden>
-      <h2 class="int-card__title">Conclusión de valor</h2>
+    <section class="card" data-panel="6" hidden>
+      <h2 class="card__title">Conclusión de valor</h2>
       <div class="concl-box">
         <div class="concl-tile"><span>Estimado automático (valor central)</span><strong id="res-auto">—</strong></div>
         <div class="concl-tile"><span>Valor por comparables</span><strong id="res-cmp">—</strong></div>
@@ -164,17 +167,23 @@
         <button class="btn btn--ghost" data-prev>← Regresar</button>
         <div style="display:flex;gap:10px;">
           <button class="btn btn--ghost" id="btnGuardar">Guardar</button>
-          <button class="btn btn--gold" id="btnGuardarInforme">Guardar y ver informe</button>
+          <button class="btn btn--primary" id="btnGuardarInforme">Guardar y ver informe</button>
         </div>
       </div>
     </section>
 
-  </main>
+      </div>
+
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/crm-data.js"></script>
   <script src="../colonias.js"></script>
+  <script src="js/crm-util.js"></script>
+  <script src="js/crm-auth.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/valuacion-core.js"></script>

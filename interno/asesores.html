@@ -12,40 +12,40 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="asesores">
 
-  <header class="int-top">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Asesores</span>
+  <div class="app" id="app">
+    <div class="main">
+
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="asesores"></span>
+          <h1>Asesores</h1>
+        </div>
+      </header>
+
+      <div class="page page--narrow">
+        <div class="crm-config-warn">
+          El <strong>acceso</strong> (correo y contraseña) de cada asesor se crea en el panel de Supabase
+          (Authentication → Users). Su perfil aparece aquí automáticamente en su primer inicio de sesión.
+          Aquí administras nombre, teléfono, rol y si está activo.
+          <br><strong>Recibe leads:</strong> los prospectos que llegan del sitio se reparten automáticamente
+          entre los asesores activos con esta casilla marcada (le toca al que menos leads haya recibido en los últimos 30 días).
+        </div>
+
+        <div id="msg"></div>
+        <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
       </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Panel</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
-      </div>
+
     </div>
-  </header>
-
-  <main class="int-wrap">
-    <div class="int-head"><h1>Asesores</h1></div>
-
-    <div class="crm-config-warn">
-      El <strong>acceso</strong> (correo y contraseña) de cada asesor se crea en el panel de Supabase
-      (Authentication → Users). Su perfil aparece aquí automáticamente en su primer inicio de sesión.
-      Aquí administras nombre, teléfono, rol y si está activo.
-      <br><strong>Recibe leads:</strong> los prospectos que llegan del sitio se reparten automáticamente
-      entre los asesores activos con esta casilla marcada (le toca al que menos leads haya recibido en los últimos 30 días).
-    </div>
-
-    <div id="msg"></div>
-    <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
-  </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+  <script src="js/crm-util.js"></script>
   <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/asesores-ui.js"></script>
 </body>
 </html>
