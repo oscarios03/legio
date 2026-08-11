@@ -28,19 +28,18 @@ window.SUPABASE_ANON_KEY = 'eyJ...tu-anon-key...';
 2. Abre `supabase-migracion.sql`, copia **todo** su contenido, pégalo y dale **Run**.
 3. Repite con **`supabase-migracion-v2.sql`** (bitácora de seguimiento, avalúos en la
    nube, reparto automático de leads, anti-spam y protección de comisiones).
+4. Repite con **`supabase-migracion-v3.sql`** (comisiones en tabla aparte, flujo de
+   revisión de propiedades y moderación).
 
-Ambos archivos son idempotentes: se pueden correr varias veces sin romper nada.
+Los tres archivos son idempotentes: se pueden correr varias veces sin romper nada.
+Córrelos **en orden**; cada uno asume el anterior.
 
-> ⚠️ **La base de producción va por delante de estos dos archivos.** Se le
-> agregaron cosas por fuera que no están aquí: la tabla `propiedad_comisiones`
-> y los campos `revision_*` de `propiedades`. Antes de escribir una consulta
-> nueva, confirma las columnas contra la base real, no contra estos `.sql`.
->
-> En particular, **los porcentajes de comisión ya no viven en `propiedades`**:
-> están en `propiedad_comisiones` (1 a 1 por `propiedad_id`), para que la RLS
-> pueda dejarlos fuera del alcance de quien no debe verlos. `crm-data.js` los
-> trae embebidos y los aplana, así que en el resto del CRM se siguen usando
-> como si fueran campos de la propiedad.
+> **Dónde viven las comisiones.** Desde la v3, los porcentajes **no están en
+> `propiedades`**: están en `propiedad_comisiones` (1 a 1 por `propiedad_id`).
+> El motivo es que la RLS de Postgres es por fila, no por columna: dejarlos en
+> `propiedades` significaba que cualquier asesor con acceso a la ficha podía
+> leer lo que gana la casa. `crm-data.js` los trae embebidos y los aplana, así
+> que en el resto del CRM se siguen usando como si fueran campos de la propiedad.
 
 ### 4. Crear el bucket de fotos
 1. **Storage → New bucket**.
@@ -200,6 +199,7 @@ el alta del lead**.
 |---|---|
 | `supabase-migracion.sql` | Tablas base, RLS y storage (v1). |
 | `supabase-migracion-v2.sql` | Bitácora, avalúos, reparto de leads, anti-spam, seguridad. |
+| `supabase-migracion-v3.sql` | Comisiones en tabla aparte, revisión de propiedades y moderación. |
 | `supabase/functions/notificar-lead/` | Edge Function del aviso por correo. |
 | `interno/js/crm-util.js` | Formato, enlaces de WhatsApp, exportación a CSV. |
 | `interno/js/crm-data.js` | Toda la lectura/escritura contra Supabase. |
