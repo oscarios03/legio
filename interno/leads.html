@@ -12,84 +12,81 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="leads">
 
-  <header class="int-top">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Prospectos</span>
+  <div class="app" id="app">
+    <div class="main">
+
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="prospectos"></span>
+          <h1>Prospectos</h1>
+        </div>
+        <div class="topbar__actions">
+          <button class="btn btn--ghost btn--sm" id="btnCSV"><span data-ico="descargar"></span> Exportar</button>
+          <button class="btn btn--primary btn--sm" id="btnNuevo"><span data-ico="mas"></span> Lead manual</button>
+        </div>
+      </header>
+
+      <div class="page">
+        <div class="crm-filters">
+          <div class="form-group">
+            <label for="f-buscar">Buscar</label>
+            <input type="text" id="f-buscar" placeholder="Nombre, teléfono o correo…" />
+          </div>
+          <div class="form-group">
+            <label for="f-estatus">Estatus</label>
+            <select id="f-estatus">
+              <option value="">Todos</option>
+              <option value="nuevo">Nuevo</option>
+              <option value="contactado">Contactado</option>
+              <option value="cita">Cita</option>
+              <option value="cerrado">Cerrado</option>
+              <option value="perdido">Perdido</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-origen">Origen</label>
+            <select id="f-origen">
+              <option value="">Todos</option>
+              <option value="form">Formulario</option>
+              <option value="estimador">Estimador</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="manual">Manual</option>
+              <option value="referido">Referido</option>
+              <option value="portal">Portal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-asesor">Asesor</label>
+            <select id="f-asesor">
+              <option value="">Todos</option>
+              <option value="sin">Sin asignar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="f-urgencia">Pendientes</label>
+            <select id="f-urgencia">
+              <option value="">Todos</option>
+              <option value="sin-contactar">Sin contactar</option>
+              <option value="vencidos">Seguimiento vencido</option>
+              <option value="hoy">Seguimiento hoy</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="crm-count" id="count"></p>
+        <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
       </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Panel</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
-      </div>
+
     </div>
-  </header>
-
-  <main class="int-wrap">
-    <div class="int-head">
-      <h1>Prospectos</h1>
-      <div class="int-top__actions">
-        <button class="btn btn--ghost btn--sm" id="btnCSV">Exportar CSV</button>
-        <button class="btn btn--gold btn--sm" id="btnNuevo">+ Lead manual</button>
-      </div>
-    </div>
-
-    <div class="crm-filters">
-      <div class="form-group">
-        <label for="f-buscar">Buscar</label>
-        <input type="text" id="f-buscar" placeholder="Nombre, teléfono o correo…" />
-      </div>
-      <div class="form-group">
-        <label for="f-estatus">Estatus</label>
-        <select id="f-estatus">
-          <option value="">Todos</option>
-          <option value="nuevo">Nuevo</option>
-          <option value="contactado">Contactado</option>
-          <option value="cita">Cita</option>
-          <option value="cerrado">Cerrado</option>
-          <option value="perdido">Perdido</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="f-origen">Origen</label>
-        <select id="f-origen">
-          <option value="">Todos</option>
-          <option value="form">Formulario</option>
-          <option value="estimador">Estimador</option>
-          <option value="whatsapp">WhatsApp</option>
-          <option value="manual">Manual</option>
-          <option value="referido">Referido</option>
-          <option value="portal">Portal</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="f-asesor">Asesor</label>
-        <select id="f-asesor">
-          <option value="">Todos</option>
-          <option value="sin">Sin asignar</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="f-urgencia">Pendientes</label>
-        <select id="f-urgencia">
-          <option value="">Todos</option>
-          <option value="sin-contactar">Sin contactar</option>
-          <option value="vencidos">Seguimiento vencido</option>
-          <option value="hoy">Seguimiento hoy</option>
-        </select>
-      </div>
-    </div>
-
-    <p class="crm-count" id="count"></p>
-    <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
-  </main>
+  </div>
 
   <!-- Formulario simple de lead manual (oculto por defecto) -->
   <div id="modal" class="crm-modal" style="display:none;">
-    <div class="int-card" style="max-width:460px;width:100%;margin:0;">
-      <h3 class="int-card__title">Nuevo lead manual</h3>
+    <div class="card" style="max-width:460px;width:100%;margin:0;">
+      <h3 class="card__title">Nuevo lead manual</h3>
+      <p class="card__desc">Para el prospecto que llega por teléfono, referido o de un portal.</p>
       <div class="form-group"><label for="m-nombre">Nombre *</label><input type="text" id="m-nombre" /></div>
       <div class="int-grid-2">
         <div class="form-group"><label for="m-tel">Teléfono</label><input type="tel" id="m-tel" /></div>
@@ -111,7 +108,7 @@
       <div id="m-dup"></div>
       <div class="int-actions">
         <button class="btn btn--ghost" id="mCancel">Cancelar</button>
-        <button class="btn btn--gold" id="mSave">Guardar</button>
+        <button class="btn btn--primary" id="mSave">Guardar</button>
       </div>
     </div>
   </div>
@@ -121,6 +118,7 @@
   <script src="js/crm-util.js"></script>
   <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/leads-ui.js"></script>
 </body>
 </html>

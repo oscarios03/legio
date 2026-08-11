@@ -12,28 +12,14 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
-
-  <!-- Barra superior (solo con sesión) -->
-  <header class="int-top" id="topBar" style="display:none;">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span>
-        <span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Avalúos</span>
-      </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← CRM</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Cerrar sesión</button>
-      </div>
-    </div>
-  </header>
+<body class="int" data-page="avaluos">
 
   <!-- LOGIN (solo aplica si AUTH_ENABLED = true en auth.js) -->
-  <section class="int-login int-card" id="loginCard">
+  <section class="int-login" id="loginCard" style="display:none;">
     <div class="int-login__logo">
-      <span class="logo-legio">LEGIO</span>
-      <div class="int-top__tag" style="color:var(--gold);">Herramienta de avalúos · acceso interno</div>
+      <div class="side__mark">L</div>
+      <b>Legio Inmobiliaria</b>
+      <span>Herramienta de avalúos · acceso interno</span>
     </div>
     <form id="loginForm" novalidate>
       <div class="form-group">
@@ -41,29 +27,41 @@
         <input type="password" id="pwd" placeholder="Ingresa la contraseña" autocomplete="current-password" />
       </div>
       <div class="int-login__error" id="loginError"></div>
-      <button type="submit" class="btn btn--gold btn--full">Entrar</button>
+      <button type="submit" class="btn btn--primary btn--full">Entrar</button>
     </form>
   </section>
 
-  <!-- DASHBOARD -->
-  <main class="int-wrap" id="dashboard" style="display:none;">
-    <div class="int-head">
-      <h1>Avalúos</h1>
-      <div class="int-top__actions">
-        <input type="file" id="importFile" accept="application/json" style="display:none;" />
-        <button class="btn btn--ghost btn--sm" id="btnImport">Importar respaldo</button>
-        <button class="btn btn--ghost btn--sm" id="btnExport">Exportar respaldo</button>
-        <a class="btn btn--gold btn--sm" href="avaluo.html">+ Nuevo avalúo</a>
-      </div>
-    </div>
+  <div class="app" id="app" style="display:none;">
+    <div class="main">
 
-    <div id="modoAviso"></div>
-    <div id="listWrap"></div>
-  </main>
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="avaluos"></span>
+          <h1>Avalúos</h1>
+        </div>
+        <div class="topbar__actions">
+          <input type="file" id="importFile" accept="application/json" style="display:none;" />
+          <button class="btn btn--ghost btn--sm" id="btnImport">Importar respaldo</button>
+          <button class="btn btn--ghost btn--sm" id="btnExport"><span data-ico="descargar"></span> Exportar respaldo</button>
+          <a class="btn btn--primary btn--sm" href="avaluo.html"><span data-ico="mas"></span> Nuevo avalúo</a>
+        </div>
+      </header>
+
+      <div class="page">
+        <div id="modoAviso"></div>
+        <p class="crm-count" id="count"></p>
+        <div id="listWrap"></div>
+      </div>
+
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
+  <script src="js/crm-util.js"></script>
+  <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/dashboard-ui.js"></script>

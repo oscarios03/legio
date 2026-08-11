@@ -1,6 +1,7 @@
 /* ===== ASISTENTE DE CAPTURA DE AVALÚO ===== */
 (function () {
   if (!Legio.auth.requireAuth('index.html')) return;
+  Legio.shell.montar({ page: 'avaluos' });
 
   const $  = id => document.getElementById(id);
   const $$ = sel => [...document.querySelectorAll(sel)];

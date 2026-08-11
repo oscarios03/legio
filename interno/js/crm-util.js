@@ -34,9 +34,12 @@
     },
 
     // "hace 3 días" / "en 2 días" / "hoy"
+    // Una fecha suelta ('YYYY-MM-DD') se lee como medianoche local, no UTC:
+    // si no, en México "mañana" se convertiría en "hoy".
     haceCuanto(iso) {
       if (!iso) return '—';
-      const dias = util.diasEntre(new Date(iso), new Date());
+      const d = (typeof iso === 'string' && iso.length === 10) ? new Date(iso + 'T00:00:00') : new Date(iso);
+      const dias = util.diasEntre(d, new Date());
       if (dias === 0) return 'hoy';
       if (dias === 1) return 'ayer';
       if (dias > 1)   return 'hace ' + dias + ' días';

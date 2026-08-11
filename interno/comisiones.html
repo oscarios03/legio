@@ -12,43 +12,44 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="interno.css" />
 </head>
-<body class="int">
+<body class="int" data-page="comisiones">
 
-  <header class="int-top">
-    <div class="int-top__inner int-wrap" style="padding-top:0;padding-bottom:0;">
-      <div class="int-top__brand">
-        <span class="logo-legio">LEGIO</span><span class="logo-sub">Inmobiliaria</span>
-        <span class="int-top__tag">Comisiones</span>
+  <div class="app" id="app">
+    <div class="main">
+
+      <header class="topbar">
+        <div class="topbar__title">
+          <span data-ico="comisiones"></span>
+          <h1>Reporte de comisiones</h1>
+        </div>
+        <div class="topbar__actions">
+          <button class="btn btn--ghost btn--sm" id="btnCSV"><span data-ico="descargar"></span> Exportar CSV</button>
+        </div>
+      </header>
+
+      <div class="page">
+        <div class="crm-filters">
+          <div class="form-group"><label for="f-desde">Desde (fecha de venta)</label><input type="date" id="f-desde" /></div>
+          <div class="form-group"><label for="f-hasta">Hasta</label><input type="date" id="f-hasta" /></div>
+          <div class="form-group"><label for="f-asesor">Asesor</label><select id="f-asesor"><option value="">Todos</option></select></div>
+          <div class="form-group" style="flex:0 0 auto;align-self:flex-end;">
+            <button class="btn btn--primary btn--sm" id="btnFiltrar">Generar</button>
+          </div>
+        </div>
+
+        <div class="kpis" id="totales"></div>
+        <div id="listWrap"><div class="int-card int-empty">Genera el reporte para ver resultados.</div></div>
       </div>
-      <div class="int-top__actions">
-        <a class="btn btn--ghost btn--sm" href="index.html" style="color:#fff;border-color:rgba(255,255,255,.4);">← Panel</a>
-        <button class="btn btn--ghost btn--sm" id="btnLogout" style="color:#fff;border-color:rgba(255,255,255,.4);">Salir</button>
-      </div>
-    </div>
-  </header>
 
-  <main class="int-wrap">
-    <div class="int-head">
-      <h1>Reporte de comisiones</h1>
-      <button class="btn btn--ghost btn--sm" id="btnCSV">Exportar CSV</button>
     </div>
-
-    <div class="crm-filters">
-      <div class="form-group"><label for="f-desde">Desde (fecha de venta)</label><input type="date" id="f-desde" /></div>
-      <div class="form-group"><label for="f-hasta">Hasta</label><input type="date" id="f-hasta" /></div>
-      <div class="form-group"><label for="f-asesor">Asesor</label><select id="f-asesor"><option value="">Todos</option></select></div>
-      <div class="form-group" style="flex:0 0 auto;align-self:flex-end;"><button class="btn btn--gold btn--sm" id="btnFiltrar">Generar</button></div>
-    </div>
-
-    <div class="com-totales" id="totales"></div>
-    <div id="listWrap"><div class="int-card int-empty">Genera el reporte para ver resultados.</div></div>
-  </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/crm-util.js"></script>
   <script src="js/crm-auth.js"></script>
   <script src="js/crm-data.js"></script>
+  <script src="js/crm-shell.js"></script>
   <script src="js/comisiones-ui.js"></script>
 </body>
 </html>

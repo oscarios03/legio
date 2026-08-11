@@ -2,6 +2,7 @@
 (function () {
   const $ = id => document.getElementById(id);
   const U = Legio.util;
+  const ico = Legio.ico.svg;
 
   let TODAS = [];
   let INTERESADOS = {};   // propiedad_id -> nº de prospectos interesados
@@ -36,38 +37,45 @@
     $('count').textContent = lista.length === 1 ? '1 propiedad' : lista.length + ' propiedades';
     const wrap = $('listWrap');
     if (!lista.length) {
-      wrap.innerHTML = '<div class="int-card int-empty">No hay propiedades con esos filtros. Crea una con <strong>+ Nueva propiedad</strong>.</div>';
+      wrap.innerHTML = '<div class="card int-empty">No hay propiedades con esos filtros. Crea una con <strong>+ Nueva propiedad</strong>.</div>';
       return;
     }
     wrap.innerHTML =
-      '<div class="tabla-scroll"><table class="int-table"><thead><tr>' +
-      '<th></th><th>Título</th><th>Tipo</th><th>Ciudad</th><th>Precio</th><th>Estatus</th>' +
-      '<th>En mercado</th><th>Interesados</th><th>Público</th><th>Captador</th><th></th>' +
+      '<div class="card card--pad0"><div class="tabla-scroll"><table class="int-table int-table--acciones"><thead><tr>' +
+      '<th>Propiedad</th><th>Tipo</th><th>Precio</th><th>Estatus</th>' +
+      '<th>En mercado</th><th>Interesados</th><th>Captador</th><th></th>' +
       '</tr></thead><tbody>' +
       lista.map(p => `<tr>
-        <td>${p.foto_principal_url
+        <td>
+          <a class="celda-id" href="propiedad-form.html?id=${p.id}">
+            ${p.foto_principal_url
               ? `<img class="crm-thumb" src="${U.esc(p.foto_principal_url)}" alt="" />`
-              : `<span class="crm-thumb crm-thumb--ph">—</span>`}</td>
-        <td><strong>${U.esc(p.titulo)}</strong><br><span class="td-sub">${U.esc(p.colonia || '')}</span></td>
-        <td>${U.etTipo(p.tipo)} · ${p.operacion === 'renta' ? 'Renta' : 'Venta'}</td>
-        <td>${U.esc(p.ciudad || '—')}</td>
-        <td>${U.fmtMXN(p.precio)}</td>
-        <td>${badge(p.estatus)}</td>
+              : `<span class="crm-thumb crm-thumb--ph">${ico('casa')}</span>`}
+            <span class="celda-id__txt">
+              <b>${U.esc(p.titulo)}</b>
+              <span>${U.esc([p.colonia, p.ciudad].filter(Boolean).join(' · ') || '—')}</span>
+            </span>
+          </a>
+        </td>
+        <td class="td-sub">${U.etTipo(p.tipo)} · ${p.operacion === 'renta' ? 'Renta' : 'Venta'}</td>
+        <td class="td-num">${U.fmtMXN(p.precio)}</td>
+        <td>${badge(p.estatus)}
+          <span class="td-sub" style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+            ${p.publica ? '<i class="dot dot--ok"></i>En el sitio' : 'Sin publicar'}</span></td>
         <td>${celdaDias(p)}</td>
         <td>${INTERESADOS[p.id]
               ? `<a href="propiedad-form.html?id=${p.id}#interesados" title="Ver interesados"><strong>${INTERESADOS[p.id]}</strong></a>`
               : '<span class="td-sub">0</span>'}</td>
-        <td>${p.publica ? 'Sí' : 'No'}</td>
-        <td>${p.captador ? U.esc(p.captador.nombre) : '—'}</td>
+        <td class="td-sub">${p.captador ? U.esc(p.captador.nombre) : '—'}</td>
         <td><div class="int-table__actions">
           ${p.publica && p.estatus === 'disponible'
-            ? `<button class="btn btn--ghost btn--sm" data-share="${p.id}" data-titulo="${U.esc(p.titulo)}" title="Compartir ficha">🔗</button>`
+            ? `<button class="btn btn--ghost btn--sm" data-share="${p.id}" data-titulo="${U.esc(p.titulo)}" title="Compartir ficha">${ico('sitio')}</button>`
             : ''}
           <a class="btn btn--ghost btn--sm" href="propiedad-form.html?id=${p.id}">Editar</a>
           ${esAdmin ? `<button class="btn btn--danger btn--sm" data-del="${p.id}">Eliminar</button>` : ''}
         </div></td>
       </tr>`).join('') +
-      '</tbody></table></div>';
+      '</tbody></table></div></div>';
 
     wrap.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -107,7 +115,12 @@
 
   async function init() {
     if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
-    esAdmin = await Legio.crmAuth.isAdmin();
+    const info = await Legio.shell.montar({ page: 'propiedades' });
+    esAdmin = info.admin;
+
+    // Permite entrar ya filtrado desde el panel: crm.html?estatus=vendida
+    const est = new URLSearchParams(location.search).get('estatus');
+    if (est) $('f-estatus').value = est;
     try {
       const [props, asesores] = await Promise.all([
         Legio.crm.propiedades.list(),
@@ -123,11 +136,9 @@
       });
       aplicar();
     } catch (e) {
-      $('listWrap').innerHTML = '<div class="int-card crm-msg crm-msg--err">No se pudieron cargar las propiedades: ' + U.esc(e.message) + '</div>';
+      $('listWrap').innerHTML = '<div class="card crm-msg crm-msg--err">No se pudieron cargar las propiedades: ' + U.esc(e.message) + '</div>';
     }
   }
-
-  $('btnLogout').addEventListener('click', async () => { await Legio.crmAuth.logout(); location.replace('index.html'); });
 
   init();
 })();

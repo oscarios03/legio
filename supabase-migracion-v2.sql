@@ -116,7 +116,7 @@ create trigger trg_avaluos_touch before update on public.avaluos
 create sequence if not exists public.avaluo_folio_seq;
 
 create or replace function public.avaluo_folio() returns trigger
-  language plpgsql as $$
+  language plpgsql set search_path = public as $$
   begin
     if new.folio is null or new.folio = '' then
       new.folio := 'LEGIO-' || to_char(now(), 'YYYY') || '-' ||

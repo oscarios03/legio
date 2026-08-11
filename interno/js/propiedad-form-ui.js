@@ -294,6 +294,7 @@
 
   async function init() {
     if (!(await Legio.crmAuth.requireAuth('index.html'))) return;
+    await Legio.shell.montar({ page: 'propiedades' });
     esAdmin = await Legio.crmAuth.isAdmin();
     if (!esAdmin) $('ventaBox').style.display = 'none';
     mostrarCamposPorTipo();
@@ -301,7 +302,7 @@
       await cargarAsesores();
       if (editId) {
         $('titulo').textContent = 'Editar propiedad';
-        $('modoTag').textContent = 'Editar propiedad';
+        document.title = 'Editar propiedad — CRM Legio';
         await cargarPropiedad(editId);
       } else {
         // Prefijar captador con el asesor actual
