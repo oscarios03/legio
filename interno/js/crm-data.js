@@ -17,6 +17,22 @@
   }
   function check(error) { if (error) throw new Error(error.message || String(error)); }
 
+  /* ---- Comisiones ------------------------------------------------------------
+   * Los porcentajes NO están en `propiedades`: viven en `propiedad_comisiones`
+   * (1-a-1 por propiedad_id) para que la RLS pueda dejarlos fuera del alcance de
+   * quien no debe verlos. Aquí se traen embebidos y se aplanan, de modo que el
+   * resto del CRM las siga usando como campos normales de la propiedad.
+   */
+  const CAMPOS_COMISION = ['comision_pct', 'comision_captador_pct', 'comision_vendedor_pct'];
+  const EMBED_COMISION  = 'comisiones:propiedad_comisiones(' + CAMPOS_COMISION.join(', ') + ')';
+
+  // PostgREST devuelve objeto (relación 1-a-1) o arreglo según versión y llaves.
+  function comisionesDe(fila) {
+    const c = fila && fila.comisiones;
+    const row = Array.isArray(c) ? c[0] : c;
+    return row || {};
+  }
+
   async function miId() {
     if (!window.sb) return null;
     const { data } = await window.sb.auth.getUser();
@@ -40,14 +56,25 @@
     },
 
     async get(id) {
-      const { data, error } = await sb().from('propiedades').select('*').eq('id', id).maybeSingle();
+      const { data, error } = await sb().from('propiedades')
+        .select('*, ' + EMBED_COMISION).eq('id', id).maybeSingle();
       check(error);
-      return data || null;
+      if (!data) return null;
+      // La ficha las trae planas, como siempre las ha usado el formulario.
+      return { ...data, ...comisionesDe(data) };
     },
 
-    // Inserta (sin id) o actualiza (con id). Devuelve la fila guardada.
+    /* Inserta (sin id) o actualiza (con id). Devuelve la fila guardada.
+     * Los porcentajes de comisión viven en `propiedad_comisiones` (tabla aparte,
+     * protegida por RLS para que solo el admin los escriba), así que se separan
+     * del payload y se guardan en su propia tabla. */
     async save(obj) {
       const payload = { ...obj };
+      const com = {};
+      CAMPOS_COMISION.forEach(c => {
+        if (c in payload) { com[c] = payload[c]; delete payload[c]; }
+      });
+
       let res;
       if (!payload.id) {
         res = await sb().from('propiedades').insert(payload).select().single();
@@ -56,7 +83,15 @@
         res = await sb().from('propiedades').update(payload).eq('id', id).select().single();
       }
       check(res.error);
-      return res.data;
+
+      if (Object.keys(com).length && res.data) {
+        const up = await sb().from('propiedad_comisiones')
+          .upsert({ propiedad_id: res.data.id, ...com }, { onConflict: 'propiedad_id' });
+        // Un asesor sin permiso sobre comisiones no debe perder el guardado de la
+        // propiedad: la RLS ya bloqueó lo que tenía que bloquear.
+        if (up.error) console.warn('[Legio] Comisiones no guardadas:', up.error.message);
+      }
+      return { ...res.data, ...com };
     },
 
     async setEstatus(id, estatus, extra) {
@@ -402,7 +437,7 @@
     async reporte(opts) {
       opts = opts || {};
       let q = sb().from('propiedades')
-        .select('*, captador:asesor_captador_id(nombre), vendedor:asesor_vendedor_id(nombre)')
+        .select('*, captador:asesor_captador_id(nombre), vendedor:asesor_vendedor_id(nombre), ' + EMBED_COMISION)
         .eq('estatus', 'vendida');
       if (opts.desde) q = q.gte('fecha_venta', opts.desde);
       if (opts.hasta) q = q.lte('fecha_venta', opts.hasta);
@@ -412,10 +447,11 @@
 
       const rows = (data || []).map(p => {
         const base = Number(p.precio_venta_final || p.precio || 0);
-        const pctCap = num(p.comision_captador_pct);
-        const pctVen = num(p.comision_vendedor_pct);
+        const c = comisionesDe(p);
+        const pctCap = num(c.comision_captador_pct);
+        const pctVen = num(c.comision_vendedor_pct);
         // Si no hay split, usar comision_pct como total y repartir 50/50 informativo.
-        const totalPct = num(p.comision_pct);
+        const totalPct = num(c.comision_pct);
         const comCap = pctCap != null ? base * pctCap / 100 : (totalPct != null ? base * totalPct / 200 : 0);
         const comVen = pctVen != null ? base * pctVen / 100 : (totalPct != null ? base * totalPct / 200 : 0);
         return {
@@ -590,8 +626,8 @@
           .lte('proximo_seguimiento', opts.agendaHasta || hasta)
           .order('proximo_seguimiento', { ascending: true }),
         sb().from('propiedades').select('id, titulo, ciudad, estatus, precio, precio_venta_final, publica, ' +
-          'comision_pct, comision_captador_pct, comision_vendedor_pct, created_at, fecha_venta, ' +
-          'foto_principal_url, asesor_captador_id, asesor_vendedor_id, vendedor:asesor_vendedor_id(nombre)'),
+          'created_at, fecha_venta, foto_principal_url, asesor_captador_id, asesor_vendedor_id, ' +
+          'vendedor:asesor_vendedor_id(nombre), ' + EMBED_COMISION),
         sb().from('lead_actividades').select('id, tipo, created_at')
           .gte('created_at', desde).lte('created_at', hasta + 'T23:59:59'),
       ]);
@@ -685,9 +721,10 @@
    * comisiones, para no inventar cifras distintas en dos pantallas. */
   function comisionDe(p, asesorId) {
     const base = Number(p.precio_venta_final || p.precio || 0);
-    const tot = num(p.comision_pct);
-    const cap = num(p.comision_captador_pct) != null ? num(p.comision_captador_pct) : (tot != null ? tot / 2 : null);
-    const ven = num(p.comision_vendedor_pct) != null ? num(p.comision_vendedor_pct) : (tot != null ? tot / 2 : null);
+    const c = comisionesDe(p);
+    const tot = num(c.comision_pct);
+    const cap = num(c.comision_captador_pct) != null ? num(c.comision_captador_pct) : (tot != null ? tot / 2 : null);
+    const ven = num(c.comision_vendedor_pct) != null ? num(c.comision_vendedor_pct) : (tot != null ? tot / 2 : null);
     if (cap == null && ven == null) return 0;
 
     if (!asesorId) return base * ((cap || 0) + (ven || 0)) / 100;
