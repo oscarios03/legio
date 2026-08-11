@@ -61,12 +61,44 @@
             <label for="f-asesor">Captador</label>
             <select id="f-asesor"><option value="">Todos</option></select>
           </div>
+          <div class="form-group">
+            <label for="f-revision">Revisión</label>
+            <select id="f-revision">
+              <option value="">Todas</option>
+              <option value="pendiente">Por revisar</option>
+              <option value="aprobada">Aprobadas</option>
+              <option value="devuelta">Devueltas</option>
+              <option value="desechada">Desechadas</option>
+            </select>
+          </div>
         </div>
 
+        <div id="avisoRevision"></div>
         <p class="crm-count" id="count"></p>
         <div id="listWrap"><div class="int-card int-empty">Cargando…</div></div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Dictamen del admin sobre una propiedad -->
+  <div id="modalRev" class="crm-modal" style="display:none;">
+    <div class="card" style="max-width:480px;width:100%;margin:0;">
+      <h3 class="card__title" id="revTitulo">Revisar propiedad</h3>
+      <p class="card__desc" id="revSub"></p>
+      <div class="form-group">
+        <label for="rev-obs">Observaciones para el captador</label>
+        <textarea id="rev-obs" rows="3" placeholder="Qué hay que corregir antes de publicarla."></textarea>
+        <p class="form-hint" id="revHint"></p>
+      </div>
+      <div class="int-actions">
+        <button class="btn btn--ghost" id="revCancel">Cancelar</button>
+        <span style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn--danger" id="revDesechar">Desechar</button>
+          <button class="btn btn--ghost" id="revDevolver">Devolver</button>
+          <button class="btn btn--primary" id="revAprobar">Aprobar y publicar</button>
+        </span>
+      </div>
     </div>
   </div>
 

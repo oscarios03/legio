@@ -126,14 +126,16 @@
     const urgentes = p.nuevos.length + p.vencidos.length;
     $('puntoAlerta').hidden = !urgentes;
 
-    const viejo = p.vencidos.length
-      ? U.diasEntre(new Date(p.vencidos[0].proximo_seguimiento + 'T00:00:00'), new Date())
-      : 0;
+    // El seguimiento siempre trae fecha (la consulta la exige), pero un dato
+    // suelto sin ella pintaría "NaN días" en la tarjeta: mejor no arriesgarlo.
+    const f = p.vencidos.length && p.vencidos[0].proximo_seguimiento
+      ? new Date(p.vencidos[0].proximo_seguimiento + 'T00:00:00') : null;
+    const viejo = f && !isNaN(f) ? U.diasEntre(f, new Date()) : 0;
     const nuevos24 = p.nuevos.filter(l => (Date.now() - new Date(l.created_at)) > 864e5).length;
     const citasHoy = p.citas.filter(l => l.proximo_seguimiento === U.hoyISO()).length;
 
     $('contenido').innerHTML =
-      bloqueAcciones(p, { nuevos24, viejo, citasHoy }) +
+      bloqueAcciones(p, { nuevos24, viejo, citasHoy }, d) +
       bloqueResultados(d) +
       bloqueGraficas(d) +
       bloqueAgendaCierres(d) +
@@ -144,7 +146,19 @@
   }
 
   // --- 1. Lo que exige atención hoy ---
-  function bloqueAcciones(p, x) {
+  function bloqueAcciones(p, x, d) {
+    /* Al admin le sale una cuarta tarjeta con las propiedades por dictaminar.
+     * Sin esto, una ficha capturada se queda invisible en el sitio y nadie se
+     * entera: la base exige la aprobación, pero nada la pide. */
+    const revision = ADMIN && d.inventario.porRevisar ? tarjetaAccion({
+      ico: 'check', tono: 'gold', et: 'Propiedades por revisar',
+      n: String(d.inventario.porRevisar).padStart(2, '0'),
+      unidad: d.inventario.porRevisar === 1 ? 'propiedad' : 'propiedades',
+      boton: 'Revisar', href: 'crm.html?revision=pendiente',
+      alerta: d.inventario.porRevisar > 3,
+      pie: 'No salen al sitio hasta que las apruebes',
+    }) : '';
+
     return `<div class="acciones">
       ${tarjetaAccion({
         ico: 'inbox', tono: p.nuevos.length ? 'bad' : 'ok', et: 'Sin contactar',
@@ -159,7 +173,9 @@
         n: String(p.vencidos.length).padStart(2, '0'), unidad: 'prospectos',
         boton: 'Ponerse al día', href: 'leads.html?urgencia=vencidos',
         alerta: x.viejo > 3,
-        pie: p.vencidos.length ? 'El más atrasado lleva ' + plural(x.viejo, 'día', 'días') : 'Sin seguimientos atrasados',
+        pie: !p.vencidos.length ? 'Sin seguimientos atrasados'
+             : x.viejo ? 'El más atrasado lleva ' + plural(x.viejo, 'día', 'días')
+             : 'Vencen hoy',
       })}
       ${tarjetaAccion({
         ico: 'calendario', tono: 'navy', et: 'Citas esta semana',
@@ -167,6 +183,7 @@
         boton: 'Ver agenda', href: 'leads.html?estatus=cita',
         pie: x.citasHoy ? (x.citasHoy === 1 ? 'Una es hoy' : x.citasHoy + ' son hoy') : 'Nada agendado para hoy',
       })}
+      ${revision}
     </div>`;
   }
 

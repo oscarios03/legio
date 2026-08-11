@@ -95,10 +95,33 @@ El botón **Exportar** baja a CSV los prospectos del periodo que estés viendo.
   captador/vendedor, y (solo admin) % de comisión.
 - Columna **En mercado**: días que lleva publicada. En rojo si pasa de 180 días.
 - Columna **Interesados**: cuántos prospectos preguntaron por ella.
-- Botón **🔗** para compartir la ficha pública por WhatsApp (copia también el enlace).
-- Una propiedad aparece en el **sitio público** (`propiedades.html` y portada) solo si
-  está **Disponible** y con **"Mostrar en el sitio público"** activado. Si además marcas
-  **Destacada**, sale en la portada.
+- Botón de **compartir** para mandar la ficha pública por WhatsApp (copia también el enlace).
+
+#### Qué hace falta para que una propiedad salga al sitio público
+Tres cosas, **todas**: estatus **Disponible**, casilla **"Mostrar en el sitio público"**
+y **revisión aprobada**. Lo exige la base (política `prop_public_sel`), no solo la
+interfaz: marcar la casilla no publica nada por sí solo. Si además la marcas
+**Destacada**, sale en la portada.
+
+#### Revisión
+El asesor captura y el administrador dictamina. Toda propiedad nueva nace **Por revisar**.
+
+| Dictamen | Qué pasa |
+|---|---|
+| **Aprobar** | Se marca como pública y ya sale al sitio. |
+| **Devolver** | Se despublica y el captador ve tus observaciones en su ficha. Al corregir y guardar, vuelve a entrar a revisión sola. |
+| **Desechar** | Se despublica y no se publicará. |
+
+Al devolver o desechar, las **observaciones son obligatorias**: es lo único que el
+captador va a ver para saber qué corregir.
+
+Dónde se ve:
+- **Panel del admin**: tarjeta *Propiedades por revisar* cuando hay pendientes.
+- **Lista de propiedades**: aviso arriba, filtro **Revisión** y botón **Revisar** por fila.
+  La columna *Estatus* dice *Falta aprobar* cuando la casilla está puesta pero el
+  dictamen no ha llegado.
+- **Ficha de la propiedad**: el captador ve el estado y las observaciones al abrirla.
+- Al asesor le sale un aviso en su lista cuando le devuelven algo.
 
 ### Prospectos (`leads.html` y `lead.html`)
 - Los formularios del sitio (contacto, guía PDF y estimador) crean leads automáticamente

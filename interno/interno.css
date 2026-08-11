@@ -556,6 +556,9 @@ body.int .form-group textarea[readonly] { background: var(--surface-2); color: v
 .int-table--acciones tbody tr:hover td:last-child { background: var(--surface-2); }
 .td-sub { color: var(--ink-3); font-size: .78rem; }
 .td-num { font-variant-numeric: tabular-nums; }
+/* Texto secundario de tabla que no debe partirse: partir dispara el alto de la
+   fila y descuadra toda la lista. */
+.td-nowrap { white-space: nowrap; }
 .tbl-input--md { width: 150px; }
 .tbl-input--sm { width: 112px; }
 

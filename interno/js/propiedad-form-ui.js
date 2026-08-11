@@ -165,10 +165,37 @@
     $('p-com-cap').value = p.comision_captador_pct ?? '';
     $('p-com-ven').value = p.comision_vendedor_pct ?? '';
     mostrarCamposPorTipo();
+    pintarRevision(p);
     fotosGuardadas = await Legio.crm.fotos.listByPropiedad(id);
     renderFotos();
     pintarCompartir(p);
     cargarInteresados(id);
+  }
+
+  /* Estado de la revisión, arriba del formulario.
+   * El captador tiene que enterarse aquí de por qué su propiedad no aparece en
+   * el sitio: la casilla "mostrar en el sitio público" puede estar marcada y
+   * aun así no salir, porque la política RLS exige el dictamen del admin. */
+  function pintarRevision(p) {
+    const caja = $('revisionBox');
+    if (!caja) return;
+    const esc = Legio.util.esc;
+    const estado = p.revision_estado || 'pendiente';
+    const obs = p.revision_observaciones;
+
+    const cajas = {
+      pendiente: ['warn', 'Esta propiedad está <strong>esperando revisión</strong>. No sale al sitio público hasta que un administrador la apruebe.'],
+      aprobada:  ['ok',   'Propiedad <strong>aprobada</strong>. Si está disponible y marcada como pública, ya se ve en el sitio.'],
+      devuelta:  ['err',  'Un administrador <strong>devolvió</strong> esta propiedad. Corrige lo señalado y guarda: vuelve a entrar a revisión automáticamente.'],
+      desechada: ['err',  'Esta propiedad fue <strong>desechada</strong> por un administrador y no se publicará.'],
+    };
+    const [tono, texto] = cajas[estado] || cajas.pendiente;
+    caja.innerHTML = `<div class="crm-msg crm-msg--${tono}">${texto}` +
+      (obs ? `<br><br><strong>Observaciones:</strong> ${esc(obs)}` : '') + '</div>';
+
+    $('hintPublicar').textContent = esAdmin
+      ? 'Como administrador, al aprobar la propiedad se marca como pública automáticamente.'
+      : 'Marcar esta casilla no publica la propiedad por sí sola: primero tiene que aprobarla un administrador.';
   }
 
   // ---- Compartir la ficha pública -------------------------------------------
@@ -297,6 +324,9 @@
     await Legio.shell.montar({ page: 'propiedades' });
     esAdmin = await Legio.crmAuth.isAdmin();
     if (!esAdmin) $('ventaBox').style.display = 'none';
+    $('hintPublicar').textContent = esAdmin
+      ? 'Como administrador, al aprobar la propiedad se marca como pública automáticamente.'
+      : 'Marcar esta casilla no publica la propiedad por sí sola: primero tiene que aprobarla un administrador.';
     mostrarCamposPorTipo();
     try {
       await cargarAsesores();

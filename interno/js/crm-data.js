@@ -101,6 +101,41 @@
       return data;
     },
 
+    /* Dictamen del admin sobre una propiedad capturada por un asesor.
+     * Solo las aprobadas salen al sitio público (lo exige la política RLS
+     * `prop_public_sel`, no solo la interfaz). Aprobar publica; devolver o
+     * desechar despublica, porque una ficha con observaciones no debe seguir
+     * a la vista de los clientes.
+     *   estado: 'aprobada' | 'devuelta' | 'desechada' | 'pendiente'
+     */
+    async revisar(id, estado, observaciones) {
+      const payload = {
+        revision_estado: estado,
+        revision_observaciones: observaciones || null,
+        revision_por: await miId(),
+        revision_at: new Date().toISOString(),
+      };
+      if (estado === 'aprobada') payload.publica = true;
+      if (estado === 'devuelta' || estado === 'desechada') payload.publica = false;
+
+      const { data, error } = await sb().from('propiedades')
+        .update(payload).eq('id', id).select().single();
+      check(error);
+      return data;
+    },
+
+    // Bandeja del admin: lo que espera dictamen, lo más viejo primero.
+    async porRevisar() {
+      const { data, error } = await sb().from('propiedades')
+        .select('id, titulo, tipo, operacion, ciudad, colonia, precio, estatus, created_at, ' +
+                'foto_principal_url, revision_estado, revision_observaciones, ' +
+                'captador:asesor_captador_id(nombre), creador:created_by(nombre)')
+        .eq('revision_estado', 'pendiente')
+        .order('created_at', { ascending: true });
+      check(error);
+      return data || [];
+    },
+
     // Borra la propiedad, sus filas de fotos y los objetos en Storage (sin huérfanos).
     async remove(id) {
       const fotosProp = await fotos.listByPropiedad(id);
@@ -627,7 +662,7 @@
           .order('proximo_seguimiento', { ascending: true }),
         sb().from('propiedades').select('id, titulo, ciudad, estatus, precio, precio_venta_final, publica, ' +
           'created_at, fecha_venta, foto_principal_url, asesor_captador_id, asesor_vendedor_id, ' +
-          'vendedor:asesor_vendedor_id(nombre), ' + EMBED_COMISION),
+          'revision_estado, vendedor:asesor_vendedor_id(nombre), ' + EMBED_COMISION),
         sb().from('lead_actividades').select('id, tipo, created_at')
           .gte('created_at', desde).lte('created_at', hasta + 'T23:59:59'),
       ]);
@@ -705,7 +740,12 @@
           disponibles: props.filter(p => p.estatus === 'disponible').length,
           apartadas:   props.filter(p => p.estatus === 'apartada').length,
           borradores:  props.filter(p => p.estatus === 'borrador').length,
-          publicadas:  props.filter(p => p.publica && p.estatus === 'disponible').length,
+          // "Publicada" de verdad es publica + aprobada: sin el dictamen del
+          // admin la propiedad no sale al sitio aunque tenga la casilla puesta.
+          publicadas:  props.filter(p => p.publica && p.estatus === 'disponible' &&
+                                         p.revision_estado === 'aprobada').length,
+          porRevisar:  props.filter(p => p.revision_estado === 'pendiente').length,
+          devueltas:   props.filter(p => p.revision_estado === 'devuelta').length,
           diasMercadoProm: promedio(diasAct),
           estancadas,
         },
