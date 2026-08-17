@@ -397,7 +397,11 @@
   <script src="interno/js/crm-data.js"></script>
   <script src="script.js"></script>
   <script src="colonias.js"></script>
-  <script src="interno/js/valuacion-core.js"></script>
+  <!-- Motor PÚBLICO: clasificación de zona + estimado automático. Los enfoques
+       profesionales (costos, tasas de capitalización, homologación, negociación)
+       viven en interno/js/ y esta página NO debe cargarlos. -->
+  <script src="calibracion-base.js"></script>
+  <script src="motor-base.js"></script>
   <script src="estimador.js"></script>
 </body>
 </html>

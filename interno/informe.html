@@ -17,9 +17,14 @@
   <div class="doc-toolbar no-print">
     <div class="doc-toolbar__inner">
       <a class="btn btn--ghost btn--sm" href="avaluos.html" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4);">← Avalúos</a>
-      <button class="btn btn--gold btn--sm" id="btnPDF">Descargar PDF</button>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span id="estadoEtiqueta" class="doc-estado"></span>
+        <button class="btn btn--ghost btn--sm" id="btnEmitir" hidden style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4);">Emitir avalúo</button>
+        <button class="btn btn--gold btn--sm" id="btnPDF">Descargar PDF</button>
+      </div>
     </div>
   </div>
+  <div id="avisoEstado" class="int-wrap no-print" hidden></div>
 
   <article class="doc" id="doc">
     <p class="int-empty">Cargando informe…</p>
@@ -30,6 +35,10 @@
   <script src="js/crm-data.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/storage.js"></script>
+  <!-- Motor: base pública primero, capa profesional encima (extiende, no reemplaza). -->
+  <script src="../calibracion-base.js"></script>
+  <script src="../motor-base.js"></script>
+  <script src="js/calibracion.js"></script>
   <script src="js/valuacion-core.js"></script>
   <script src="js/informe-ui.js"></script>
 </body>

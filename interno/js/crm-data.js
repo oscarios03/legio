@@ -1,6 +1,6 @@
 /* ===== DATOS DEL CRM — LEGIO (Supabase) =====
  * Espeja la forma async de interno/js/storage.js (Promesas) pero contra Supabase.
- * API: window.Legio.crm.{ propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, metricas }
+ * API: window.Legio.crm.{ propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, comparables, metricas }
  * Requiere window.sb (ver supabase-config.js). Si no está, los métodos lanzan
  * un error claro (las páginas del CRM lo muestran).
  *
@@ -466,6 +466,80 @@
     },
   };
 
+  // ---- BIBLIOTECA DE COMPARABLES -------------------------------------------
+  // Comparables reutilizables (tabla propia, no enterrados dentro de un avalúo).
+  // Requiere supabase-migracion-v3-comparables.sql.
+  const comparables = {
+    /* Busca comparables para reutilizar. Prioriza la misma colonia; si se pide,
+     * amplía al CP y a la ciudad, porque una colonia sola rara vez tiene muestra. */
+    async buscar({ cp, ciudad, colonia, tipo, limite = 30, ampliar = true } = {}) {
+      let q = sb().from('comparables').select('*').eq('activo', true);
+      if (tipo) q = q.eq('tipo', tipo);
+      if (colonia && !ampliar) q = q.eq('colonia', colonia);
+      else if (cp && ciudad) q = q.or(`cp.eq.${cp},ciudad.eq.${ciudad}`);
+      else if (cp) q = q.eq('cp', cp);
+      else if (ciudad) q = q.eq('ciudad', ciudad);
+      const { data, error } = await q.order('fecha', { ascending: false, nullsFirst: false }).limit(limite);
+      check(error);
+      // La misma colonia primero: es el comparable más relevante.
+      return (data || []).sort((a, b) => (b.colonia === colonia) - (a.colonia === colonia));
+    },
+
+    async save(obj) {
+      const payload = { ...obj };
+      let res;
+      if (!payload.id) {
+        payload.asesor_id = payload.asesor_id || await miId();
+        res = await sb().from('comparables').insert(payload).select().single();
+      } else {
+        const id = payload.id; delete payload.id; delete payload.asesor_id;
+        res = await sb().from('comparables').update(payload).eq('id', id).select().single();
+      }
+      check(res.error);
+      return res.data;
+    },
+
+    /* Guarda en la biblioteca los comparables de un avalúo. Un duplicado exacto
+     * no es un error: el índice único lo rechaza y aquí simplemente se omite,
+     * porque guardar el avalúo no puede fallar por esto. */
+    async guardarLote(lista, avaluoId) {
+      const resultados = { guardados: 0, duplicados: 0, fallidos: 0 };
+      for (const c of (lista || [])) {
+        try {
+          await this.save({ ...c, avaluo_id: avaluoId || null });
+          resultados.guardados++;
+        } catch (e) {
+          if (/duplicate key|uq_comparables_huella/i.test(e.message || '')) resultados.duplicados++;
+          else { resultados.fallidos++; console.warn('Comparable no guardado en la biblioteca:', e.message); }
+        }
+      }
+      return resultados;
+    },
+
+    // Retira un comparable sin borrar el histórico (dato erróneo o ya viejo).
+    async retirar(id) {
+      const { error } = await sb().from('comparables').update({ activo: false }).eq('id', id);
+      check(error);
+    },
+
+    async remove(id) {
+      const { error } = await sb().from('comparables').delete().eq('id', id);
+      check(error);
+    },
+
+    /* Precio por m² que Legio observa en una colonia, a partir de sus propios
+     * comparables. Es el sustituto natural del benchmark externo por ciudad. */
+    async precioObservado({ ciudad, colonia, tipo } = {}) {
+      let q = sb().from('precio_observado_colonia').select('*');
+      if (ciudad) q = q.eq('ciudad', ciudad);
+      if (colonia) q = q.eq('colonia', colonia);
+      if (tipo) q = q.eq('tipo', tipo);
+      const { data, error } = await q;
+      check(error);
+      return data || [];
+    },
+  };
+
   // ---- COMISIONES -----------------------------------------------------------
   const comisiones = {
     // Reporte de vendidas en un periodo. Devuelve filas + totales por asesor y global.
@@ -823,5 +897,5 @@
     return String(texto || '').replace(/[(),*]/g, ' ').trim();
   }
 
-  window.Legio.crm = { propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, metricas, panel };
+  window.Legio.crm = { propiedades, fotos, leads, actividades, asesores, comisiones, avaluos, comparables, metricas, panel };
 })();

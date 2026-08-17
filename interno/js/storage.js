@@ -32,11 +32,44 @@
     try { return JSON.parse(localStorage.getItem(KEY_DATA)) || []; }
     catch (e) { return []; }
   }
-  function _guardarTodos(arr) { localStorage.setItem(KEY_DATA, JSON.stringify(arr)); }
-  function _siguienteFolio() {
-    const n = (parseInt(localStorage.getItem(KEY_FOLIO), 10) || 0) + 1;
-    localStorage.setItem(KEY_FOLIO, String(n));
-    return 'LEGIO-' + new Date().getFullYear() + '-' + String(n).padStart(4, '0');
+
+  /* Escribir en localStorage FALLA de verdad: al llenarse la cuota, setItem lanza.
+   * Sin este envoltorio la excepción viajaba hasta una promesa sin manejar y el asesor
+   * pulsaba «Guardar» sin que pasara nada, después de seis pasos de captura.
+   * Aquí se traduce a un error con `codigo`, para que la interfaz sepa qué ofrecerle. */
+  function _escribir(clave, valor) {
+    try {
+      localStorage.setItem(clave, valor);
+    } catch (e) {
+      const lleno = e && (e.name === 'QuotaExceededError' ||
+                          e.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+                          e.code === 22 || e.code === 1014);
+      const err = new Error(lleno
+        ? 'No cabe en el almacenamiento de este navegador. Las fotografías son lo que más ocupa: quita algunas y vuelve a guardar, o inicia sesión en el CRM para guardar en la nube.'
+        : 'El navegador rechazó el guardado local (' + ((e && e.name) || 'error desconocido') + ').');
+      err.codigo = lleno ? 'ESPACIO_LLENO' : 'ESCRITURA_LOCAL';
+      err.causa = e;
+      throw err;
+    }
+  }
+
+  function _guardarTodos(arr) { _escribir(KEY_DATA, JSON.stringify(arr)); }
+
+  // El folio se reserva antes de escribir y se devuelve si la escritura falla, para
+  // no dejar huecos en la numeración por un guardado que nunca ocurrió.
+  function _reservarFolio() {
+    const anterior = localStorage.getItem(KEY_FOLIO);
+    const n = (parseInt(anterior, 10) || 0) + 1;
+    _escribir(KEY_FOLIO, String(n));
+    return {
+      texto: 'LEGIO-' + new Date().getFullYear() + '-' + String(n).padStart(4, '0'),
+      devolver() {
+        try {
+          if (anterior == null) localStorage.removeItem(KEY_FOLIO);
+          else localStorage.setItem(KEY_FOLIO, anterior);
+        } catch (e) { /* si ni esto se puede, el hueco en la numeración es lo de menos */ }
+      },
+    };
   }
 
   // ---- Traducción entre el objeto del avalúo y la fila de la tabla -----------
@@ -92,16 +125,28 @@
         return aAvaluo(fila);
       }
       const todos = _leerTodos();
-      if (!avaluo.id) {
+      const esNuevo = !avaluo.id;
+      let folio = null;
+      if (esNuevo) {
         avaluo.id = 'av_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-        avaluo.folio = avaluo.folio || _siguienteFolio();
+        if (!avaluo.folio) { folio = _reservarFolio(); avaluo.folio = folio.texto; }
         avaluo.fecha = avaluo.fecha || new Date().toISOString();
         todos.push(avaluo);
       } else {
         const i = todos.findIndex(a => a.id === avaluo.id);
         if (i >= 0) todos[i] = avaluo; else todos.push(avaluo);
       }
-      _guardarTodos(todos);
+      try {
+        _guardarTodos(todos);
+      } catch (e) {
+        // No quedó guardado: se deshace lo que este intento había asignado, para que
+        // reintentar no deje un id fantasma ni un hueco en la numeración de folios.
+        if (esNuevo) {
+          delete avaluo.id;
+          if (folio) { folio.devolver(); delete avaluo.folio; }
+        }
+        throw e;
+      }
       return avaluo;
     },
 

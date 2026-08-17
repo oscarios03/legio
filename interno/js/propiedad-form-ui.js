@@ -114,6 +114,8 @@
       tipo: $('p-tipo').value,
       conMin: colData.conMin, conMax: colData.conMax, terMin: colData.terMin, terMax: colData.terMax,
       coloniaNombre: colData.nombre,
+      // Si la colonia tiene precio propio, la zona ya está dentro del precio.
+      precioEsGenerico: Legio.calibracionBase.esPrecioGenerico(COLONIAS_DB[cp].ciudad, colData),
       m2c: +$('p-m2').value || 0, m2t: +$('p-m2t').value || 0,
       rec: +$('p-rec').value || 0, ban: +$('p-ban').value || 0, caj: +$('p-caj').value || 0,
       nivel: 'medio', antiguedad: $('p-antig').value || 'media', conservacion: $('p-conserv').value || 'buena',

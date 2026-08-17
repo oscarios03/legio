@@ -136,7 +136,12 @@ function buscarColonias() {
   sel.innerHTML = '<option value="">Selecciona tu colonia</option>';
   data.colonias.forEach(col => {
     const opt = document.createElement('option');
-    opt.value = JSON.stringify({ conMin: col.conMin, conMax: col.conMax, terMin: col.terMin, terMax: col.terMax, nombre: col.nombre });
+    opt.value = JSON.stringify({
+      conMin: col.conMin, conMax: col.conMax, terMin: col.terMin, terMax: col.terMax, nombre: col.nombre,
+      // Si la colonia tiene precio propio, el motor no vuelve a aplicar el multiplicador
+      // de zona: ya está dentro del precio (ver calibracion-base.js).
+      esGenerico: Legio.calibracionBase.esPrecioGenerico(data.ciudad, col),
+    });
     opt.textContent = col.nombre;
     sel.appendChild(opt);
   });
@@ -179,6 +184,7 @@ function calcular() {
     conMin: coloniaVal.conMin, conMax: coloniaVal.conMax,
     terMin: coloniaVal.terMin, terMax: coloniaVal.terMax,
     coloniaNombre: coloniaVal.nombre,
+    precioEsGenerico: coloniaVal.esGenerico,
     m2c, m2t, rec, ban, caj,
     nivel: piso, antiguedad: antig, conservacion, extras,
     atributos: { calidadAcabados: calidad, ubicacionEnColonia: ubicacion, servicios: [] },
