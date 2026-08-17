@@ -117,6 +117,12 @@ create or replace view public.precio_observado_colonia as
 comment on view public.precio_observado_colonia is
   'Precio por m² que Legio observa en cada colonia, a partir de sus propios comparables. La columna `suficiente` indica si la muestra basta para usarla como referencia.';
 
+-- Por defecto una vista corre con los privilegios de quien la creó y se salta el
+-- RLS de `comparables`. Hoy daría igual (la política de lectura es `true` para
+-- todo el equipo), pero si mañana se restringe la visibilidad de los comparables
+-- la vista los seguiría enseñando todos. Que respete a quien consulta.
+alter view public.precio_observado_colonia set (security_invoker = on);
+
 
 -- ============================================================================
 -- 4. SEGURIDAD (RLS)
