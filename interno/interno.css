@@ -721,6 +721,40 @@ body.int .form-group textarea[readonly] { background: var(--surface-2); color: v
 .concl-tile strong { font-size: 1.25rem; font-weight: 600; color: var(--ink); letter-spacing: -.03em; }
 .concl-final { background: var(--navy); color: #fff; border-radius: var(--r); padding: 20px; text-align: center; }
 .concl-final span { color: rgba(255,255,255,.7); font-size: .84rem; }
+
+/* ---- Biblioteca de comparables ---- */
+.cmp-biblioteca {
+  background: #f7f8fc; border: 1px solid #e6e9f2; border-radius: 10px;
+  padding: 16px; margin-bottom: 18px;
+}
+.cmp-biblioteca__head { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.cmp-biblioteca__head strong { display: block; color: var(--navy); font-size: .95rem; }
+.cmp-biblioteca__head span { display: block; color: var(--gray); font-size: .82rem; margin-top: 2px; }
+.bib-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  background: #fff; border: 1px solid #e6e9f2; border-radius: 8px;
+  padding: 10px 12px; margin-top: 8px;
+}
+.bib-item__datos strong { display: block; color: var(--navy); font-size: .88rem; }
+.bib-item__datos span { display: block; color: var(--gray); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.bib-item__datos b { color: var(--navy); }
+@media (max-width: 560px) { .bib-item { flex-direction: column; align-items: stretch; } }
+
+/* ---- Enfoques de valuación ---- */
+.int-sub {
+  font-family: 'Playfair Display', serif; color: var(--navy); font-size: 1.05rem;
+  margin: 26px 0 2px; padding-top: 18px; border-top: 1px solid #e6e9f2;
+}
+.card > .int-sub:first-of-type,
+.int-card > .int-sub:first-of-type { margin-top: 8px; padding-top: 0; border-top: 0; }
+.int-hint { color: var(--gray); font-size: .84rem; line-height: 1.5; margin-bottom: 14px; }
+.int-hint b, .int-hint strong { color: var(--navy); }
+/* Cifra derivada de lo capturado, no un dato de entrada: se distingue del texto de ayuda. */
+.int-hint--calc {
+  background: #f7f8fc; border: 1px solid #e6e9f2; border-radius: 8px;
+  padding: 10px 12px; margin-top: -4px; font-variant-numeric: tabular-nums;
+}
+
 .concl-final strong { display: block; font-size: 2rem; color: var(--gold); font-family: 'Playfair Display', serif; margin-top: 4px; }
 
 /* Fotos */
@@ -747,14 +781,71 @@ body.int .form-group textarea[readonly] { background: var(--surface-2); color: v
 .doc-toolbar { background: var(--navy); padding: 11px 0; position: sticky; top: 0; z-index: 25; }
 .doc-toolbar__inner { display: flex; justify-content: space-between; align-items: center; gap: 12px; max-width: 1040px; margin: 0 auto; padding: 0 20px; }
 
-.doc { max-width: 820px; margin: 24px auto; background: #fff; color: #1a1a1a; box-shadow: 0 4px 24px rgba(17,26,50,.08); padding: 48px 56px; }
-.doc__cover { border-bottom: 3px solid var(--gold); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+.doc {
+  max-width: 820px; margin: 24px auto; background: #fff; color: #1a1a1a;
+  box-shadow: 0 4px 24px rgba(17,26,50,.08); padding: 48px 56px;
+  position: relative;   /* ancla de la marca de agua de borrador */
+}
+/* ---- Portada ----
+   En pantalla es la cabecera del documento; al imprimir ocupa su propia hoja. */
+.doc__cover {
+  display: flex; flex-direction: column; min-height: 420px;
+  border-bottom: 3px solid var(--gold); padding-bottom: 24px; margin-bottom: 28px;
+}
 .doc__brand .logo-legio { font-size: 1.8rem; }
 .doc__brand .logo-sub { color: var(--gold); }
-.doc__meta { text-align: right; font-size: .82rem; color: #555; }
+.doc__cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 0; }
+.doc__cover-kicker {
+  text-transform: uppercase; letter-spacing: .09em; font-size: .74rem;
+  color: var(--gold); font-weight: 600; margin-bottom: 10px;
+}
+.doc__cover-valor {
+  margin-top: 28px; padding: 22px 24px; background: #f7f8fc;
+  border: 1px solid #e6e9f2; border-left: 4px solid var(--gold); border-radius: 6px;
+}
+.doc__cover-valor span { display: block; font-size: .78rem; color: #666; }
+.doc__cover-valor strong {
+  display: block; font-family: 'Playfair Display', serif; font-size: 2.2rem;
+  color: var(--navy); margin: 4px 0; font-variant-numeric: tabular-nums;
+}
+.doc__meta {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  font-size: .8rem; color: #555; border-top: 1px solid #e6e9f2; padding-top: 16px;
+}
+.doc__meta span { display: block; color: #888; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; }
 .doc__meta strong { color: var(--navy); }
-.doc__title { font-family: 'Playfair Display', serif; color: var(--navy); font-size: 1.6rem; margin: 8px 0 4px; }
-.doc__subtitle { color: #666; font-size: .9rem; margin-bottom: 24px; }
+.doc__title { font-family: 'Playfair Display', serif; color: var(--navy); font-size: 2rem; margin: 0 0 6px; text-wrap: balance; }
+.doc__subtitle { color: #666; font-size: .95rem; }
+@media (max-width: 640px) { .doc__meta { grid-template-columns: repeat(2, 1fr); } }
+
+/* Texto explicativo dentro del documento: metodología, notas al pie de una tabla. */
+.doc__nota { font-size: .82rem; color: #555; line-height: 1.6; margin: 8px 0; }
+.doc__nota strong { color: var(--navy); }
+
+/* Un enfoque de valuación es una unidad de lectura: no debe partirse entre hojas. */
+.doc__section--enfoque { break-inside: avoid; }
+
+/* ---- Estado del documento ---- */
+.doc-estado {
+  font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  padding: 4px 10px; border-radius: 999px;
+}
+.doc-estado--borrador { background: #fff3d6; color: #8a6a1f; }
+.doc-estado--emitido  { background: #e6f4ea; color: #2e7d32; }
+
+/* Marca de agua: solo en borradores. Un borrador impreso no puede parecer un documento
+   entregable — era imposible distinguirlos. */
+.doc__marca {
+  position: absolute; top: 42%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  font-family: 'Playfair Display', serif; font-size: 6rem; font-weight: 700;
+  color: rgba(192, 57, 43, .10); letter-spacing: .12em;
+  pointer-events: none; user-select: none; white-space: nowrap; z-index: 1;
+}
+
+/* Pie repetido en cada hoja impresa (oculto en pantalla). */
+.doc__pie { display: none; }
+
 .doc__section { margin: 24px 0; }
 .doc__section h3 { color: var(--navy); font-size: 1rem; border-bottom: 1px solid #e6e9f2; padding-bottom: 6px; margin-bottom: 12px; }
 .doc__dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; font-size: .88rem; }
@@ -774,12 +865,76 @@ body.int .form-group textarea[readonly] { background: var(--surface-2); color: v
 .doc__firma { margin-top: 36px; display: flex; justify-content: space-between; align-items: flex-end; }
 .doc__firma .linea { border-top: 1px solid #999; width: 240px; text-align: center; padding-top: 6px; font-size: .82rem; color: #555; }
 
+/* =================== IMPRESIÓN ===================
+ * El informe es un documento formal de varias hojas: se imprime con márgenes reales,
+ * portada propia, pie identificado en cada hoja y sin cortar por la mitad el recuadro
+ * del valor ni la firma. Antes eran siete líneas sin una sola regla @page.
+ */
+@page {
+  size: Letter portrait;
+  /* El margen superior deja aire; el inferior reserva la banda del pie. */
+  margin: 18mm 16mm 20mm;
+}
+
 @media print {
-  body.int { background: #fff; }
-  .doc-toolbar, .side, .topbar, .no-print { display: none !important; }
-  .doc { box-shadow: none; margin: 0; max-width: none; padding: 0; }
-  .doc__value, .doc-table th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .doc__section { page-break-inside: avoid; }
+  body.int { background: #fff; margin: 0; }
+  /* `.side` y `.topbar` son el armazón del CRM rediseñado; `.int-top` el anterior. */
+  .doc-toolbar, .side, .topbar, .int-top, .no-print { display: none !important; }
+
+  /* Sin sombra ni ancho de pantalla: la caja de impresión la define @page.
+     El padding se va a 0 porque el margen ya lo pone @page — dejarlo en 56px
+     produciría una caja centrada y estrecha dentro de la hoja. */
+  .doc {
+    box-shadow: none; margin: 0; max-width: none; padding: 0;
+    position: relative;
+    /* Longitud de línea legible: sin esto el texto ocupaba el ancho completo de la
+       hoja y salían renglones de ~138 caracteres. */
+    font-size: 10.5pt; line-height: 1.55;
+  }
+
+  /* Fondos y colores de marca deben imprimirse (por defecto el navegador los quita). */
+  .doc__value, .doc-table th, .doc__cover-valor, .doc__marca, .doc-estado {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+
+  /* ---- Portada en su propia hoja ---- */
+  .doc__cover {
+    min-height: calc(100vh - 40mm);
+    display: flex; flex-direction: column; justify-content: space-between;
+    break-after: page; border-bottom: 0; margin-bottom: 0; padding-bottom: 0;
+  }
+  .doc__cover-valor { break-inside: avoid; }
+
+  /* ---- Bloques que no pueden partirse ---- */
+  .doc__section, .doc__value, .doc__firma, .doc__dl > div,
+  .doc-table thead, .doc-table tr, .doc-fotos img { break-inside: avoid; }
+  .doc__section h3 { break-after: avoid; }        /* un título nunca queda solo al pie */
+  .doc__value, .doc__firma { break-before: avoid; }
+  .doc__legal { break-inside: avoid; }
+
+  /* Encabezado de tabla repetido si una tabla larga cruza de hoja. */
+  .doc-table thead { display: table-header-group; }
+  .tabla-scroll { overflow: visible; }            /* en papel no hay scroll horizontal */
+
+  /* ---- Pie en cada hoja ----
+     Un elemento fijo se repite en todas las páginas impresas: así ninguna hoja
+     suelta queda sin folio ni sin la advertencia de borrador. */
+  .doc__pie {
+    display: flex; justify-content: space-between;
+    position: fixed; bottom: -14mm; left: 0; right: 0;
+    font-size: 7.5pt; color: #777;
+    border-top: .5pt solid #ccc; padding-top: 2mm;
+  }
+
+  /* ---- Marca de agua de borrador, repetida en todas las hojas ---- */
+  .doc__marca {
+    position: fixed; top: 45%; left: 50%;
+    color: rgba(192, 57, 43, .13);
+    font-size: 5.5rem;
+  }
+
+  /* Las fotos a 2 por fila entran mejor en papel que a 3. */
+  .doc-fotos { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ======================== 10. RESPONSIVE ================================= */

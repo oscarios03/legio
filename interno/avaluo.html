@@ -35,7 +35,8 @@
       <div class="int-step" data-step="3">3 · Atributos</div>
       <div class="int-step" data-step="4">4 · Comparables</div>
       <div class="int-step" data-step="5">5 · Fotos</div>
-      <div class="int-step" data-step="6">6 · Conclusión</div>
+      <div class="int-step" data-step="6">6 · Enfoques</div>
+      <div class="int-step" data-step="7">7 · Conclusión</div>
     </div>
 
     <!-- PASO 1: Cliente -->
@@ -123,6 +124,19 @@
     <section class="card" data-panel="4" hidden>
       <h2 class="card__title">Comparativa de mercado</h2>
       <p class="card__desc">Captura propiedades similares en venta o vendidas. El sistema ajusta cada una respecto a tu inmueble y concilia un valor por m².</p>
+      <!-- Biblioteca: lo que ya investigó el equipo, para no volver a capturarlo. -->
+      <div class="cmp-biblioteca">
+        <div class="cmp-biblioteca__head">
+          <div>
+            <strong>Biblioteca de comparables</strong>
+            <span id="bibEstado">Busca los que el equipo ya capturó en esta zona.</span>
+          </div>
+          <button class="btn btn--ghost btn--sm" id="btnBuscarBib" type="button">Buscar en la zona</button>
+        </div>
+        <div id="bibResultados"></div>
+        <div id="bibObservado"></div>
+      </div>
+
       <div class="cmp-list" id="cmpList"></div>
       <button class="btn btn--ghost btn--sm" id="btnAddCmp" style="margin-top:14px;">+ Agregar comparable</button>
       <div class="cmp-concl" id="cmpConcl">Agrega comparables para ver la conciliación.</div>
@@ -139,12 +153,61 @@
     </section>
 
     <!-- PASO 6: Conclusión -->
+    <!-- PASO 6: Enfoques de valuación -->
     <section class="card" data-panel="6" hidden>
+      <h2 class="card__title">Enfoques de valuación</h2>
+      <p class="card__desc">
+        El enfoque de mercado sale de los comparables del paso 4. Aquí se capturan los otros dos
+        y se decide cuánto pesa cada uno en el valor final.
+      </p>
+
+      <h3 class="int-sub">Enfoque de costo</h3>
+      <p class="int-hint">Valor de reposición nuevo menos depreciación (Ross-Heidecke), más el terreno.
+        Usa la calidad de acabados del paso 3 y la conservación del paso 2.</p>
+      <div class="int-grid-2">
+        <div class="form-group"><label for="k-edad">Edad de la construcción (años)</label><input type="number" id="k-edad" min="0" max="200" placeholder="0" /></div>
+        <div class="form-group"><label for="k-vidautil">Vida útil total (años)</label><input type="number" id="k-vidautil" min="1" max="200" value="60" /></div>
+      </div>
+      <div id="k-detalle" class="int-hint int-hint--calc"></div>
+
+      <h3 class="int-sub">Enfoque de ingresos</h3>
+      <p class="int-hint">Capitaliza la renta <strong>neta</strong> (descontando vacancia y gastos).
+        Déjalo vacío si el inmueble no es de renta: no capturarlo no penaliza el avalúo.</p>
+      <div class="int-grid-2">
+        <div class="form-group"><label for="i-renta">Renta mensual de mercado (MXN)</label><input type="number" id="i-renta" min="0" placeholder="Sin dato" /></div>
+        <div class="form-group"><label for="i-tasa">Tasa de capitalización neta anual (%)</label><input type="number" id="i-tasa" min="0" max="30" step="0.1" /></div>
+        <div class="form-group"><label for="i-vacancia">Vacancia (%)</label><input type="number" id="i-vacancia" min="0" max="100" step="1" /></div>
+        <div class="form-group"><label for="i-gastos">Gastos de operación (%)</label><input type="number" id="i-gastos" min="0" max="100" step="1" /></div>
+      </div>
+      <div id="i-detalle" class="int-hint int-hint--calc"></div>
+
+      <h3 class="int-sub">Pesos de conciliación</h3>
+      <p class="int-hint">Se sugieren según el tipo de inmueble. Un enfoque sin datos no entra, y los
+        pesos de los que sí entran se reparten proporcionalmente — el informe declara el peso aplicado.</p>
+      <div class="int-grid-3">
+        <div class="form-group"><label for="w-mercado">Mercado (%)</label><input type="number" id="w-mercado" min="0" max="100" step="5" /></div>
+        <div class="form-group"><label for="w-costo">Costo (%)</label><input type="number" id="w-costo" min="0" max="100" step="5" /></div>
+        <div class="form-group"><label for="w-ingresos">Ingresos (%)</label><input type="number" id="w-ingresos" min="0" max="100" step="5" /></div>
+      </div>
+      <div id="w-detalle" class="int-hint int-hint--calc"></div>
+
+      <div class="int-actions">
+        <button class="btn btn--ghost" data-prev>← Regresar</button>
+        <button class="btn btn--gold" data-next>Continuar →</button>
+      </div>
+    </section>
+
+    <!-- PASO 7: Conclusión -->
+    <section class="card" data-panel="7" hidden>
       <h2 class="card__title">Conclusión de valor</h2>
       <div class="concl-box">
-        <div class="concl-tile"><span>Estimado automático (valor central)</span><strong id="res-auto">—</strong></div>
-        <div class="concl-tile"><span>Valor por comparables</span><strong id="res-cmp">—</strong></div>
+        <div class="concl-tile"><span>Mercado (comparables)</span><strong id="res-cmp">—</strong></div>
+        <div class="concl-tile"><span>Costo</span><strong id="res-costo">—</strong></div>
+        <div class="concl-tile"><span>Ingresos</span><strong id="res-ingresos">—</strong></div>
+        <div class="concl-tile"><span>Estimado por zona (contraste)</span><strong id="res-auto">—</strong></div>
       </div>
+      <div id="res-conciliacion" class="int-hint int-hint--calc"></div>
+      <div id="res-alertas"></div>
 
       <div class="switch-row">
         <input type="checkbox" id="ovr-activo" />
@@ -162,6 +225,9 @@
         <strong id="res-final">—</strong>
         <span id="res-rango"></span>
       </div>
+
+      <!-- Resultado del guardado. Nunca debe fallar en silencio: aquí se explica qué pasó. -->
+      <div id="avisoGuardado" hidden></div>
 
       <div class="int-actions">
         <button class="btn btn--ghost" data-prev>← Regresar</button>
@@ -186,6 +252,10 @@
   <script src="js/crm-shell.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/storage.js"></script>
+  <!-- Motor: base pública primero, capa profesional encima (extiende, no reemplaza). -->
+  <script src="../calibracion-base.js"></script>
+  <script src="../motor-base.js"></script>
+  <script src="js/calibracion.js"></script>
   <script src="js/valuacion-core.js"></script>
   <script src="js/avaluo-ui.js"></script>
 </body>
