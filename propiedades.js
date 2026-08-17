@@ -45,7 +45,10 @@ function formatPrecioProp(n, operacion) {
 }
 
 function etiquetaTipoProp(t) {
-  return { casa: 'Casa', departamento: 'Departamento', local: 'Local comercial', terreno: 'Terreno' }[t] || t;
+  const ET = { casa: 'Casa', departamento: 'Departamento', local: 'Local comercial', terreno: 'Terreno' };
+  // Solo claves propias: un tipo como "constructor" traía el valor del prototipo
+  // de Object y acababa impreso en el aria-label de la tarjeta.
+  return Object.prototype.hasOwnProperty.call(ET, t) ? ET[t] : String(t == null ? '' : t);
 }
 
 // ── Tarjeta de propiedad ──
@@ -57,8 +60,19 @@ const ICONO_PROP = {
   terreno: '<path d="M6 36L18 20L28 32L34 24L42 36V42H6V36Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><circle cx="34" cy="12" r="4" stroke="currentColor" stroke-width="2.5"/>',
 };
 
+// Escapa para HTML. Sirve igual en texto y en atributo: cubre los cinco caracteres
+// con significado en ambos contextos. Todo dato que venga de la base pasa por aquí
+// antes de entrar a un template — el catálogo lo escribe el equipo de asesores y se
+// pinta con innerHTML en una página pública.
 function escAttr(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// El icono es el único fragmento que entra sin escapar, así que se toma solo de
+// las claves propias del mapa: `ICONO_PROP[tipo]` con un tipo como "constructor"
+// devolvía algo del prototipo de Object y ensuciaba el SVG.
+function iconoDeTipo(tipo) {
+  return Object.prototype.hasOwnProperty.call(ICONO_PROP, tipo) ? ICONO_PROP[tipo] : ICONO_PROP.casa;
 }
 
 function propiedadCardHTML(p) {
@@ -75,21 +89,21 @@ function propiedadCardHTML(p) {
   const alt = `${etiquetaTipoProp(p.tipo)} en ${p.colonia}, ${p.ciudad}`;
   const media = p.foto
     ? `<img class="property-card__img" src="${escAttr(p.foto)}" alt="${escAttr(alt)}" loading="lazy" decoding="async" />`
-    : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">${ICONO_PROP[p.tipo] || ICONO_PROP.casa}</svg>`;
+    : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">${iconoDeTipo(p.tipo)}</svg>`;
 
   return `
   <article class="property-card">
     <a class="property-card__media" href="${ficha}" aria-label="Ver ${escAttr(alt)}">
       ${media}
-      <span class="property-card__op property-card__op--${p.operacion}">${p.operacion === 'renta' ? 'Renta' : 'Venta'}</span>
-      ${p.badge ? `<span class="property-card__badge">${p.badge}</span>` : ''}
+      <span class="property-card__op property-card__op--${p.operacion === 'renta' ? 'renta' : 'venta'}">${p.operacion === 'renta' ? 'Renta' : 'Venta'}</span>
+      ${p.badge ? `<span class="property-card__badge">${escAttr(p.badge)}</span>` : ''}
     </a>
     <div class="property-card__body">
       <p class="property-card__price">${formatPrecioProp(p.precio, p.operacion)}</p>
-      <h3 class="property-card__title"><a href="${ficha}">${p.titulo}</a></h3>
+      <h3 class="property-card__title"><a href="${ficha}">${escAttr(p.titulo)}</a></h3>
       <p class="property-card__loc">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        ${p.colonia}, ${p.ciudad}
+        ${escAttr(p.colonia)}, ${escAttr(p.ciudad)}
       </p>
       <div class="property-card__feats">${feats.join('')}</div>
       <a class="property-card__cta" href="${ficha}">Ver propiedad →</a>
@@ -111,11 +125,13 @@ function mapRowToCard(row) {
     operacion: row.operacion,
     ciudad: row.ciudad,
     colonia: row.colonia,
+    // Numéricos: se interpolan sin escapar en la tarjeta, así que se coercionan
+    // aquí. Number() de algo no numérico da NaN, y `|| 0` lo deja en 0.
     precio: Number(row.precio) || 0,
-    m2: row.m2 || 0,
-    rec: row.recamaras || 0,
-    ban: row.banos || 0,
-    caj: row.cajones || 0,
+    m2: Number(row.m2) || 0,
+    rec: Number(row.recamaras) || 0,
+    ban: Number(row.banos) || 0,
+    caj: Number(row.cajones) || 0,
     destacada: !!row.destacada,
     badge: row.destacada ? 'Destacada' : '',
     foto: row.foto_principal_url || '',
