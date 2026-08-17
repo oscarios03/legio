@@ -30,8 +30,10 @@ window.SUPABASE_ANON_KEY = 'eyJ...tu-anon-key...';
    nube, reparto automático de leads, anti-spam y protección de comisiones).
 4. Repite con **`supabase-migracion-v3.sql`** (comisiones en tabla aparte, flujo de
    revisión de propiedades y moderación).
+5. Repite con **`supabase-migracion-v3-permisos.sql`** (cierra las funciones internas
+   del CRM para que no se puedan llamar desde la API).
 
-Los tres archivos son idempotentes: se pueden correr varias veces sin romper nada.
+Los archivos son idempotentes: se pueden correr varias veces sin romper nada.
 Córrelos **en orden**; cada uno asume el anterior.
 
 > **Dónde viven las comisiones.** Desde la v3, los porcentajes **no están en
@@ -41,11 +43,15 @@ Córrelos **en orden**; cada uno asume el anterior.
 > leer lo que gana la casa. `crm-data.js` los trae embebidos y los aplana, así
 > que en el resto del CRM se siguen usando como si fueran campos de la propiedad.
 
-### 4. Crear el bucket de fotos
-1. **Storage → New bucket**.
-2. Nombre exacto: `propiedades`. Marca **Public bucket**. Crear.
-3. Vuelve al **SQL Editor** y ejecuta solo la sección final de `supabase-migracion.sql`
-   ("POLÍTICAS DE STORAGE") si no se aplicó antes (al haber creado el bucket después).
+### 4. El bucket de fotos
+No hay que hacer nada: `supabase-migracion.sql` crea el bucket público
+`propiedades` junto con sus políticas de storage. Compruébalo en **Storage**;
+si por lo que sea no aparece, créalo a mano (**Storage → New bucket**, nombre
+exacto `propiedades`, marcado **Public bucket**).
+
+> En una base que ya está en producción no vuelvas a correr los archivos
+> completos: `supabase-migracion.sql` recrearía políticas que la v2 y la v3
+> ya reemplazaron. Corre solo la sección que necesites.
 
 ### 5. Crear los usuarios (accesos)
 1. **Authentication → Users → Add user**: crea tu usuario **admin** (correo + contraseña).
@@ -223,6 +229,7 @@ el alta del lead**.
 | `supabase-migracion.sql` | Tablas base, RLS y storage (v1). |
 | `supabase-migracion-v2.sql` | Bitácora, avalúos, reparto de leads, anti-spam, seguridad. |
 | `supabase-migracion-v3.sql` | Comisiones en tabla aparte, revisión de propiedades y moderación. |
+| `supabase-migracion-v3-permisos.sql` | Quita el EXECUTE de las funciones internas para que no queden expuestas como RPC. |
 | `supabase/functions/notificar-lead/` | Edge Function del aviso por correo. |
 | `interno/js/crm-util.js` | Formato, enlaces de WhatsApp, exportación a CSV. |
 | `interno/js/crm-data.js` | Toda la lectura/escritura contra Supabase. |
