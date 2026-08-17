@@ -105,7 +105,7 @@ create index if not exists idx_leads_estatus on public.leads(estatus);
 
 -- 5. Trigger updated_at en propiedades ---------------------------------------
 create or replace function public.touch_updated_at() returns trigger
-  language plpgsql as $$
+  language plpgsql set search_path = public as $$
   begin new.updated_at = now(); return new; end
 $$;
 
@@ -204,9 +204,13 @@ create policy leads_auth_sel on public.leads for select to authenticated using (
 create policy leads_auth_wr  on public.leads for all to authenticated using (true) with check (true);
 
 -- ============================================================================
--- POLÍTICAS DE STORAGE (bucket 'propiedades')
--- Ejecuta esto DESPUÉS de haber creado el bucket 'propiedades' en el panel.
+-- STORAGE: bucket 'propiedades' y sus políticas
+-- No hace falta crear el bucket a mano en el panel: se crea aquí.
 -- ============================================================================
+insert into storage.buckets (id, name, public)
+values ('propiedades', 'propiedades', true)
+on conflict (id) do update set public = true;
+
 drop policy if exists stor_pub_read   on storage.objects;
 drop policy if exists stor_auth_write on storage.objects;
 
